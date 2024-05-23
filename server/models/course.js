@@ -5,7 +5,7 @@ const Review = require("./reviews");
 const courseSchema = new Schema({
   name: String,
   code: String,
-  instructor: String,
+  instructor: [String],
   review: [
     {
       type: Schema.Types.ObjectId,
@@ -14,4 +14,4 @@ const courseSchema = new Schema({
   ],
 });
 
-module.exports = mongoose.model('Course', courseSchema);
+module.exports = mongoose.model("Course", courseSchema);
