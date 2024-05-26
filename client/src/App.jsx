@@ -1,22 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import CourseList from "./components/CourseList";
+import Course from "./components/Course"
 
 function App() {
-  const apiCall = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000");
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
+  const [courses, setCourses] = useState([]);
   return (
-    <>
-      <h1>First client-server interaction</h1>
-      <button onClick={apiCall}>Make Call</button>
-    </>
+    <div>
+      <Routes>
+        <Route
+          path="/"
+          element={<CourseList courses={courses} setCourses={setCourses} />}
+        />
+        <Route path="/courses/:courseId" element={<Course />} />
+      </Routes>
+    </div>
   );
 }
 

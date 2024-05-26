@@ -6,7 +6,7 @@ const courseSchema = new Schema({
   name: String,
   code: String,
   instructor: [String],
-  review: [
+  reviews: [
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
