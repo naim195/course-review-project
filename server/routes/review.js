@@ -19,4 +19,10 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.delete('/:reviewId', async (req, res) => {
+  const { id, reviewId } = req.params;
+  Course.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+  await Review.findByIdAndDelete(reviewId);
+})
+
 module.exports = router;

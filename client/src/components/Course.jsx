@@ -16,6 +16,7 @@ import { useParams } from "react-router-dom";
 export default function Course() {
   const { courseId } = useParams();
   const [courseData, setCourseData] = useState({});
+  const [reviews, setReviews] = useState([]);
   const [reviewData, setReviewData] = useState({
     rating: "",
     effortForGoodGrade: "",
@@ -31,11 +32,14 @@ export default function Course() {
         `http://localhost:3000/courses/${courseId}`,
       );
       const data = response.data;
+      console.log(data);
       setCourseData(data);
     } catch (error) {
       console.error("Error fetching course data:", error);
     }
   };
+
+
 
   const handleChange = (e) => {
     setReviewData({
@@ -52,6 +56,7 @@ export default function Course() {
         reviewData,
       );
       console.log("Review submitted successfully");
+      fetchCourseData(courseId);
     } catch (error) {
       console.error("Error submitting review:", error);
     }
@@ -60,6 +65,15 @@ export default function Course() {
   useEffect(() => {
     fetchCourseData(courseId);
   }, [courseId]);
+
+  const handleDelete=async (reviewId) => {
+    try{await axios.delete(`http://localhost:3000/courses/${courseId}/reviews/${reviewId}`);
+      fetchCourseData(courseId);
+    }
+    catch(error) {
+      console.error('Error deleting review', error);
+    }
+  }
 
   return (
     <Container maxWidth="md">
@@ -90,8 +104,13 @@ export default function Course() {
         <div>Reviews</div>
         {courseData.reviews &&
           courseData.reviews.map((review, index) => (
-            <div key={index}>{review.textReview}</div>
-          ))}
+            <div key={index}>
+              {review.textReview}
+              <Button variant="contained" color="secondary" onClick={() => handleDelete(review._id)}>Delete</Button>
+            </div>
+          ))
+
+        }
       </div>
       <Box my={4}>
         <Paper elevation={3}>
