@@ -9,8 +9,8 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const course = await Courses.findById(id);
+  const course = await Courses.findById(id).populate("reviews");
   res.send(course);
-})
+});
 
 module.exports = router;

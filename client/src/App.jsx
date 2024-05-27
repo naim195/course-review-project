@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import CourseList from "./components/CourseList";
-import Course from "./components/Course"
+import Course from "./components/Course";
 
 function App() {
   const [courses, setCourses] = useState([]);
