@@ -12,19 +12,29 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
 
 export default function Course() {
   const { courseId } = useParams();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      rating: 0,
+      effortForGoodGrade: 0,
+      overallDifficulty: 0,
+      assignmentDifficulty: 0,
+      examDifficulty: 0,
+      textReview: "",
+    },
+  });
+
   const [courseData, setCourseData] = useState({});
   const [reviews, setReviews] = useState([]);
-  const [reviewData, setReviewData] = useState({
-    rating: 0,
-    effortForGoodGrade: 0,
-    overallDifficulty: 0,
-    assignmentDifficulty: 0,
-    examDifficulty: 0,
-    textReview: "",
-  });
 
   useEffect(() => {
     fetchCourseData(courseId);
@@ -32,7 +42,9 @@ export default function Course() {
 
   const fetchCourseData = async (courseId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/courses/${courseId}`);
+      const response = await axios.get(
+        `http://localhost:3000/courses/${courseId}`,
+      );
       setCourseData(response.data);
       setReviews(response.data.reviews || []);
     } catch (error) {
@@ -55,12 +67,14 @@ export default function Course() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`http://localhost:3000/courses/${courseId}/reviews`, reviewData);
+      const response = await axios.post(
+        `http://localhost:3000/courses/${courseId}/reviews`,
+        data,
+      );
       setReviews((prev) => [...prev, response.data]);
-      setReviewData({
+      reset({
         rating: 0,
         effortForGoodGrade: 0,
         overallDifficulty: 0,
@@ -75,7 +89,9 @@ export default function Course() {
 
   const handleDelete = async (reviewId) => {
     try {
-      await axios.delete(`http://localhost:3000/courses/${courseId}/reviews/${reviewId}`);
+      await axios.delete(
+        `http://localhost:3000/courses/${courseId}/reviews/${reviewId}`,
+      );
       setReviews((prev) => prev.filter((review) => review._id !== reviewId));
     } catch (error) {
       console.error("Error deleting review", error);
@@ -108,10 +124,29 @@ export default function Course() {
         </Paper>
       </Box>
       <div>
-        <Typography variant="h5" component="h2" gutterBottom>Reviews</Typography>
+        <Typography variant="h5" component="h2" gutterBottom>
+          Reviews
+        </Typography>
         {reviews.map((review, index) => (
           <div key={review._id || index}>
-            <Typography variant="body2" gutterBottom>{review.textReview}</Typography>
+            <Typography variant="body2" gutterBottom>
+              {review.textReview}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Overall Rating: {review.rating}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Effort for Good Grade: {review.effortForGoodGrade}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Overall Difficulty: {review.overallDifficulty}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Assignment Difficulty: {review.assignmentDifficulty}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Exam Difficulty: {review.examDifficulty}
+            </Typography>
             <Button
               variant="contained"
               color="secondary"
@@ -128,93 +163,169 @@ export default function Course() {
             <Typography variant="h5" component="h2" gutterBottom>
               Add a Review
             </Typography>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography id="overallRating-slider" gutterBottom>
                     Overall Rating
                   </Typography>
-                  <Rating
+                  <Controller
                     name="rating"
-                    value={reviewData.rating}
-                    onChange={(e, newValue) => handleSliderChange("rating")(e, newValue)}
-                    precision={0.5}
-                    required
+                    control={control}
+                    rules={{ required: true, min: 0.5, max: 5 }}
+                    render={({ field }) => (
+                      <Rating
+                        {...field}
+                        precision={0.5}
+                        value={field.value || 0}
+                        onChange={(e, newValue) => field.onChange(newValue)}
+                      />
+                    )}
                   />
+                  {errors.rating && (
+                    <Typography color="error">
+                      Overall Rating is required and must be between 0.5 and 5.
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <Typography id="effortForGoodGrade-slider" gutterBottom>
                     Effort Required for Good Grade
                   </Typography>
-                  <Slider
+                  <Controller
                     name="effortForGoodGrade"
-                    value={reviewData.effortForGoodGrade}
-                    onChange={handleSliderChange("effortForGoodGrade")}
-                    min={0}
-                    max={5}
-                    valueLabelDisplay="auto"
-                    step={1}
-                    marks
-                    required
+                    control={control}
+                    rules={{ required: true, min: 1, max: 5 }}
+                    render={({ field }) => (
+                      <Slider
+                        {...field}
+                        value={field.value || 0}
+                        onChange={(_, newValue) =>
+                          field.onChange(newValue)
+                        }
+                        min={0}
+                        max={5}
+                        step={1}
+                        marks
+                        valueLabelDisplay="auto"
+                      />
+                    )}
                   />
+                  {errors.effortForGoodGrade && (
+                    <Typography color="error">
+                      Effort Required for Good Grade is required and must be
+                      between 1 and 5.
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <Typography id="overallDifficulty-slider" gutterBottom>
                     Overall Difficulty
                   </Typography>
-                  <Slider
+                  <Controller
                     name="overallDifficulty"
-                    value={reviewData.overallDifficulty}
-                    onChange={handleSliderChange("overallDifficulty")}
-                    min={0}
-                    max={5}
-                    valueLabelDisplay="auto"
-                    step={1}
-                    marks
-                    required
+                    control={control}
+                    rules={{ required: true, min: 1, max: 5 }}
+                    render={({ field }) => (
+                      <Slider
+                        {...field}
+                        value={field.value || 0}
+                        onChange={(_, newValue) =>
+                          field.onChange(newValue)
+                        }
+                        min={0}
+                        max={5}
+                        step={1}
+                        marks
+                        valueLabelDisplay="auto"
+                      />
+                    )}
                   />
+                  {errors.overallDifficulty && (
+                    <Typography color="error">
+                      Overall Difficulty is required and must be between 1 and
+                      5.
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <Typography id="assignmentDifficulty-slider" gutterBottom>
                     Assignment Difficulty
                   </Typography>
-                  <Slider
+                  <Controller
                     name="assignmentDifficulty"
-                    value={reviewData.assignmentDifficulty}
-                    onChange={handleSliderChange("assignmentDifficulty")}
-                    min={0}
-                    max={5}
-                    step={1}
-                    marks
-                    required
+                    control={control}
+                    rules={{ required: true, min: 1, max: 5 }}
+                    render={({ field }) => (
+                      <Slider
+                        {...field}
+                        value={field.value || 0}
+                        onChange={(_, newValue) =>
+                          field.onChange(newValue)
+                        }
+                        min={0}
+                        max={5}
+                        step={1}
+                        marks
+                        valueLabelDisplay="auto"
+                      />
+                    )}
                   />
+                  {errors.assignmentDifficulty && (
+                    <Typography color="error">
+                      Assignment Difficulty is required and must be between 1
+                      and 5.
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <Typography id="examDifficulty-slider" gutterBottom>
                     Exam Difficulty
                   </Typography>
-                  <Slider
+                  <Controller
                     name="examDifficulty"
-                    value={reviewData.examDifficulty}
-                    onChange={handleSliderChange("examDifficulty")}
-                    min={0}
-                    max={5}
-                    step={1}
-                    marks
-                    valueLabelDisplay="auto"
-                    required
+                    control={control}
+                    rules={{ required: true, min: 1, max: 5 }}
+                    render={({ field }) => (
+                      <Slider
+                        {...field}
+                        value={field.value || 0}
+                        onChange={(_, newValue) =>
+                          field.onChange(newValue)
+                        }
+                        min={0}
+                        max={5}
+                        step={1}
+                        marks
+                        valueLabelDisplay="auto"
+                      />
+                    )}
                   />
+                  {errors.examDifficulty && (
+                    <Typography color="error">
+                      Exam Difficulty is required and must be between 1 and 5.
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     label="Text Review"
                     name="textReview"
-                    value={reviewData.textReview}
-                    onChange={handleChange}
+                    {...register("textReview", {
+                      required: true,
+                      minLength: 10,
+                      maxLength: 1000,
+                    })}
                     fullWidth
                     multiline
                     rows={4}
                   />
+                  {errors.textReview && (
+                    <Typography color="error">
+                      Text Review is required and must be between 10 and 1000
+                      characters.
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <Button variant="contained" color="primary" type="submit">
