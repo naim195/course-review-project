@@ -18,62 +18,69 @@ export default function Course() {
   const [courseData, setCourseData] = useState({});
   const [reviews, setReviews] = useState([]);
   const [reviewData, setReviewData] = useState({
-    rating: "",
-    effortForGoodGrade: "",
-    overallDifficulty: "",
-    assignmentDifficulty: "",
-    examDifficulty: "",
+    rating: 0,
+    effortForGoodGrade: 0,
+    overallDifficulty: 0,
+    assignmentDifficulty: 0,
+    examDifficulty: 0,
     textReview: "",
   });
-
-  const fetchCourseData = async (courseId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/courses/${courseId}`,
-      );
-      const data = response.data;
-      console.log(data);
-      setCourseData(data);
-    } catch (error) {
-      console.error("Error fetching course data:", error);
-    }
-  };
-
-
-
-  const handleChange = (e) => {
-    setReviewData({
-      ...reviewData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(
-        `http://localhost:3000/courses/${courseId}/reviews`,
-        reviewData,
-      );
-      console.log("Review submitted successfully");
-      fetchCourseData(courseId);
-    } catch (error) {
-      console.error("Error submitting review:", error);
-    }
-  };
 
   useEffect(() => {
     fetchCourseData(courseId);
   }, [courseId]);
 
-  const handleDelete=async (reviewId) => {
-    try{await axios.delete(`http://localhost:3000/courses/${courseId}/reviews/${reviewId}`);
-      fetchCourseData(courseId);
+  const fetchCourseData = async (courseId) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/courses/${courseId}`);
+      setCourseData(response.data);
+      setReviews(response.data.reviews || []);
+    } catch (error) {
+      console.error("Error fetching course data:", error);
     }
-    catch(error) {
-      console.error('Error deleting review', error);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setReviewData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSliderChange = (name) => (event, newValue) => {
+    setReviewData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`http://localhost:3000/courses/${courseId}/reviews`, reviewData);
+      setReviews((prev) => [...prev, response.data]);
+      setReviewData({
+        rating: 0,
+        effortForGoodGrade: 0,
+        overallDifficulty: 0,
+        assignmentDifficulty: 0,
+        examDifficulty: 0,
+        textReview: "",
+      });
+    } catch (error) {
+      console.error("Error submitting review:", error);
     }
-  }
+  };
+
+  const handleDelete = async (reviewId) => {
+    try {
+      await axios.delete(`http://localhost:3000/courses/${courseId}/reviews/${reviewId}`);
+      setReviews((prev) => prev.filter((review) => review._id !== reviewId));
+    } catch (error) {
+      console.error("Error deleting review", error);
+    }
+  };
 
   return (
     <Container maxWidth="md">
@@ -101,16 +108,19 @@ export default function Course() {
         </Paper>
       </Box>
       <div>
-        <div>Reviews</div>
-        {courseData.reviews &&
-          courseData.reviews.map((review, index) => (
-            <div key={index}>
-              {review.textReview}
-              <Button variant="contained" color="secondary" onClick={() => handleDelete(review._id)}>Delete</Button>
-            </div>
-          ))
-
-        }
+        <Typography variant="h5" component="h2" gutterBottom>Reviews</Typography>
+        {reviews.map((review, index) => (
+          <div key={review._id || index}>
+            <Typography variant="body2" gutterBottom>{review.textReview}</Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleDelete(review._id)}
+            >
+              Delete
+            </Button>
+          </div>
+        ))}
       </div>
       <Box my={4}>
         <Paper elevation={3}>
@@ -125,10 +135,9 @@ export default function Course() {
                     Overall Rating
                   </Typography>
                   <Rating
-                    label="Rating"
                     name="rating"
                     value={reviewData.rating}
-                    onChange={handleChange}
+                    onChange={(e, newValue) => handleSliderChange("rating")(e, newValue)}
                     precision={0.5}
                     required
                   />
@@ -138,10 +147,9 @@ export default function Course() {
                     Effort Required for Good Grade
                   </Typography>
                   <Slider
-                    label="Effort for Good Grade"
                     name="effortForGoodGrade"
                     value={reviewData.effortForGoodGrade}
-                    onChange={handleChange}
+                    onChange={handleSliderChange("effortForGoodGrade")}
                     min={0}
                     max={5}
                     valueLabelDisplay="auto"
@@ -155,10 +163,9 @@ export default function Course() {
                     Overall Difficulty
                   </Typography>
                   <Slider
-                    label="Overall Difficulty"
                     name="overallDifficulty"
                     value={reviewData.overallDifficulty}
-                    onChange={handleChange}
+                    onChange={handleSliderChange("overallDifficulty")}
                     min={0}
                     max={5}
                     valueLabelDisplay="auto"
@@ -172,10 +179,9 @@ export default function Course() {
                     Assignment Difficulty
                   </Typography>
                   <Slider
-                    label="Assignment Difficulty"
                     name="assignmentDifficulty"
                     value={reviewData.assignmentDifficulty}
-                    onChange={handleChange}
+                    onChange={handleSliderChange("assignmentDifficulty")}
                     min={0}
                     max={5}
                     step={1}
@@ -188,10 +194,9 @@ export default function Course() {
                     Exam Difficulty
                   </Typography>
                   <Slider
-                    label="Exam Difficulty"
                     name="examDifficulty"
                     value={reviewData.examDifficulty}
-                    onChange={handleChange}
+                    onChange={handleSliderChange("examDifficulty")}
                     min={0}
                     max={5}
                     step={1}

@@ -12,10 +12,11 @@ router.post("/", async (req, res) => {
     course.reviews.push(review);
     await review.save();
     await course.save();
-    console.log("review added succesfully");
+    res.status(201).json(review); //gives response to frontend
+    console.log("review added succesfully"); 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" }); 
   }
 });
 
@@ -23,6 +24,7 @@ router.delete('/:reviewId', async (req, res) => {
   const { id, reviewId } = req.params;
   Course.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
   await Review.findByIdAndDelete(reviewId);
+  res.status(200).json({ message: "Review deleted successfully" });
 })
 
 module.exports = router;
