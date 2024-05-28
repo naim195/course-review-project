@@ -5,7 +5,9 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import {
+  Alert,
   CardActionArea,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -18,6 +20,8 @@ export default function CourseList({ courses, setCourses }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
 
   const fetchCourses = async () => {
     try {
@@ -26,6 +30,8 @@ export default function CourseList({ courses, setCourses }) {
       setCourses(coursesData);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,8 +46,9 @@ export default function CourseList({ courses, setCourses }) {
   const handleSearchChange = (event) => {
     if (searchCategory !== "") {
       setSearchTerm(event.target.value);
+      setShowAlert(false);
     } else {
-      alert("Please select a category before searching.");
+      setShowAlert(true);
     }
   };
 
@@ -52,6 +59,10 @@ export default function CourseList({ courses, setCourses }) {
     else if (searchCategory === "code")
       return course.code.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <>
@@ -76,6 +87,12 @@ export default function CourseList({ courses, setCourses }) {
           <MenuItem value={"name"}>Course Name</MenuItem>
         </Select>
       </FormControl>
+      {showAlert && (
+        <Alert severity="error" variant="outlined">
+          Please select a category before searching.
+        </Alert>
+      )}
+
       <Grid container spacing={3}>
         {filteredCourses.map((course) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={course._id}>
@@ -86,7 +103,9 @@ export default function CourseList({ courses, setCourses }) {
                     {course.code}
                   </Typography>
                   <Typography variant="h6">{course.name}</Typography>
-                  <Typography variant="body2">{course.instructor}</Typography>
+                  <Typography variant="body2">
+                    {course.instructor.join(",")}
+                  </Typography>
                 </CardContent>
               </CardActionArea>
             </Card>

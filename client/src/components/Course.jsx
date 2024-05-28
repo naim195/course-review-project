@@ -200,9 +200,7 @@ export default function Course() {
                       <Slider
                         {...field}
                         value={field.value || 0}
-                        onChange={(_, newValue) =>
-                          field.onChange(newValue)
-                        }
+                        onChange={(_, newValue) => field.onChange(newValue)}
                         min={0}
                         max={5}
                         step={1}
@@ -230,9 +228,7 @@ export default function Course() {
                       <Slider
                         {...field}
                         value={field.value || 0}
-                        onChange={(_, newValue) =>
-                          field.onChange(newValue)
-                        }
+                        onChange={(_, newValue) => field.onChange(newValue)}
                         min={0}
                         max={5}
                         step={1}
@@ -260,9 +256,7 @@ export default function Course() {
                       <Slider
                         {...field}
                         value={field.value || 0}
-                        onChange={(_, newValue) =>
-                          field.onChange(newValue)
-                        }
+                        onChange={(_, newValue) => field.onChange(newValue)}
                         min={0}
                         max={5}
                         step={1}
@@ -290,9 +284,7 @@ export default function Course() {
                       <Slider
                         {...field}
                         value={field.value || 0}
-                        onChange={(_, newValue) =>
-                          field.onChange(newValue)
-                        }
+                        onChange={(_, newValue) => field.onChange(newValue)}
                         min={0}
                         max={5}
                         step={1}

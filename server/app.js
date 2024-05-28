@@ -11,7 +11,6 @@ mongoose.connect("mongodb://127.0.0.1:27017/coursereview");
 app.use(cors());
 app.use(express.json());
 
-
 app.use("/courses", courses);
 app.use("/courses/:courseId/reviews", reviews);
 
