@@ -22,6 +22,20 @@ export default function CourseList({ courses, setCourses }) {
   const [searchCategory, setSearchCategory] = useState("");
   const [loading, setLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
+  const categoryToDisplayName = {
+    'core-ce': 'Civil Engg. Core Courses',
+    'core-cl': 'Chemical Engg. Core Courses',
+    'core-cs': 'Computer Science & Engg. Core Courses',
+    'core-me': 'Mechanical Engg Core Courses',
+    'core-mse': 'Materials Science & Engg Core Courses',
+    'core-ee': 'Electrical Engg Core Courses',
+    'humanities': 'Humanities Courses',
+    'management': 'Management Courses',
+    'maths-basket': 'Mathematics Basket',
+    'science-basket': 'Science Basket',
+    'es-misc': 'ES courses',
+    'misc': 'Other courses',
+  }
 
   const fetchCourses = async () => {
     try {
@@ -60,6 +74,17 @@ export default function CourseList({ courses, setCourses }) {
       return course.code.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
+  const groupedCourses = filteredCourses.reduce((acc, course) => {
+    const category = course.category;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(course);
+    return acc;
+  }, {});
+
+  console.log(groupedCourses);
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -93,25 +118,30 @@ export default function CourseList({ courses, setCourses }) {
         </Alert>
       )}
 
-      <Grid container spacing={3}>
-        {filteredCourses.map((course) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={course._id}>
-            <Card sx={{ minWidth: 275, marginBottom: 2 }}>
-              <CardActionArea onClick={() => handleCardClick(course._id)}>
-                <CardContent>
-                  <Typography variant="h4" align="left" sx={{ color: "red" }}>
-                    {course.code}
-                  </Typography>
-                  <Typography variant="h6">{course.name}</Typography>
-                  <Typography variant="body2">
-                    {course.instructor.join(",")}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
+      {Object.keys(groupedCourses).map((category) => (
+        <div key={category}>
+          <h2>{categoryToDisplayName[category]}</h2>
+          <Grid container spacing={3}>
+            {groupedCourses[category].map((course) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={course._id}>
+                <Card sx={{ minWidth: 275, marginBottom: 2 }}>
+                  <CardActionArea onClick={() => handleCardClick(course._id)}>
+                    <CardContent>
+                      <Typography variant="h4" align="left" sx={{ color: "red" }}>
+                        {course.code}
+                      </Typography>
+                      <Typography variant="h6">{course.name}</Typography>
+                      <Typography variant="body2">
+                        {course.instructor.join(",")}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        </div>
+      ))}
     </>
   );
 }
