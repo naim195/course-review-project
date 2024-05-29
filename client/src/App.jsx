@@ -7,6 +7,7 @@ import Course from "./components/Course";
 import Homepage from "./components/Homepage";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import NotFound from "./components/NotFound";
 
 function App() {
   const [courses, setCourses] = useState([]);
@@ -21,6 +22,7 @@ function App() {
           element={<CourseList courses={courses} setCourses={setCourses} />}
         />
         <Route path="/courses/:courseId" element={<Course />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </div>

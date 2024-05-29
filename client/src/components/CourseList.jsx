@@ -23,19 +23,19 @@ export default function CourseList({ courses, setCourses }) {
   const [loading, setLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const categoryToDisplayName = {
-    'core-ce': 'Civil Engg. Core Courses',
-    'core-cl': 'Chemical Engg. Core Courses',
-    'core-cs': 'Computer Science & Engg. Core Courses',
-    'core-me': 'Mechanical Engg Core Courses',
-    'core-mse': 'Materials Science & Engg Core Courses',
-    'core-ee': 'Electrical Engg Core Courses',
-    'humanities': 'Humanities Courses',
-    'management': 'Management Courses',
-    'maths-basket': 'Mathematics Basket',
-    'science-basket': 'Science Basket',
-    'es-misc': 'ES courses',
-    'misc': 'Other courses',
-  }
+    "core-ce": "Civil Engg. Core Courses",
+    "core-cl": "Chemical Engg. Core Courses",
+    "core-cs": "Computer Science & Engg. Core Courses",
+    "core-me": "Mechanical Engg Core Courses",
+    "core-mse": "Materials Science & Engg Core Courses",
+    "core-ee": "Electrical Engg Core Courses",
+    humanities: "Humanities Courses",
+    management: "Management Courses",
+    "maths-basket": "Mathematics Basket",
+    "science-basket": "Science Basket",
+    "es-misc": "ES Courses",
+    misc: "Other Courses",
+  };
 
   const fetchCourses = async () => {
     try {
@@ -83,8 +83,6 @@ export default function CourseList({ courses, setCourses }) {
     return acc;
   }, {});
 
-  console.log(groupedCourses);
-
   if (loading) {
     return <CircularProgress />;
   }
@@ -127,7 +125,11 @@ export default function CourseList({ courses, setCourses }) {
                 <Card sx={{ minWidth: 275, marginBottom: 2 }}>
                   <CardActionArea onClick={() => handleCardClick(course._id)}>
                     <CardContent>
-                      <Typography variant="h4" align="left" sx={{ color: "red" }}>
+                      <Typography
+                        variant="h4"
+                        align="left"
+                        sx={{ color: "red" }}
+                      >
                         {course.code}
                       </Typography>
                       <Typography variant="h6">{course.name}</Typography>

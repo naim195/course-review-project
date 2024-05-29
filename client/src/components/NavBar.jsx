@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
 
 const pages = ["Courses", "Instructors", "Reviews"];
-const settings = ['Logout'];
+const settings = ["Logout"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
