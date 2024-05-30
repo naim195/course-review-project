@@ -8,6 +8,11 @@ import {
   Button,
   Rating,
   Slider,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -30,6 +35,7 @@ export default function Course() {
       assignmentDifficulty: 0,
       examDifficulty: 0,
       textReview: "",
+      grade: "",
     },
   });
 
@@ -44,7 +50,7 @@ export default function Course() {
   const fetchCourseData = async (courseId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/courses/${courseId}`,
+        `http://localhost:3000/courses/${courseId}`
       );
       if (response.status === 200) {
         setCourseData(response.data);
@@ -59,26 +65,11 @@ export default function Course() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setReviewData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSliderChange = (name) => (event, newValue) => {
-    setReviewData((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
-  };
-
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
         `http://localhost:3000/courses/${courseId}/reviews`,
-        data,
+        data
       );
       setReviews((prev) => [...prev, response.data]);
       reset({
@@ -88,6 +79,7 @@ export default function Course() {
         assignmentDifficulty: 0,
         examDifficulty: 0,
         textReview: "",
+        grade: "",
       });
     } catch (error) {
       setError(error);
@@ -97,7 +89,7 @@ export default function Course() {
   const handleDelete = async (reviewId) => {
     try {
       await axios.delete(
-        `http://localhost:3000/courses/${courseId}/reviews/${reviewId}`,
+        `http://localhost:3000/courses/${courseId}/reviews/${reviewId}`
       );
       setReviews((prev) => prev.filter((review) => review._id !== reviewId));
     } catch (error) {
@@ -160,6 +152,9 @@ export default function Course() {
                 <Typography variant="body2" gutterBottom>
                   Exam Difficulty: {review.examDifficulty}
                 </Typography>
+                {/* <Typography variant="body2" gutterBottom>
+                  Grade: {review.grade}
+                </Typography> */}
                 <Button
                   variant="contained"
                   color="secondary"
@@ -315,12 +310,41 @@ export default function Course() {
                       )}
                     </Grid>
                     <Grid item xs={12}>
+                      <FormControl component="fieldset">
+                        <FormLabel component="legend">Grade</FormLabel>
+                        <Controller
+                          name="grade"
+                          control={control}
+                          rules={{ required: true }}
+                          render={({ field }) => (
+                            <RadioGroup {...field} row>
+                              {["A", "A-", "B", "B-", "C", "C-", "D", "E"].map(
+                                (grade) => (
+                                  <FormControlLabel
+                                    key={grade}
+                                    value={grade}
+                                    control={<Radio />}
+                                    label={grade}
+                                  />
+                                )
+                              )}
+                            </RadioGroup>
+                          )}
+                        />
+                        {errors.grade && (
+                          <Typography color="error">
+                            Grade is required.
+                          </Typography>
+                        )}
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
                       <TextField
-                        label="Text Review"
+                        label="Text Review(optional)"
                         name="textReview"
                         {...register("textReview", {
-                          required: true,
-                          minLength: 10,
+                          
+                          minLength: 5,
                           maxLength: 1000,
                         })}
                         fullWidth
@@ -329,8 +353,8 @@ export default function Course() {
                       />
                       {errors.textReview && (
                         <Typography color="error">
-                          Text Review is required and must be between 10 and
-                          3000 characters.
+                          Text Review must be between 5 and 3000
+                          characters.
                         </Typography>
                       )}
                     </Grid>

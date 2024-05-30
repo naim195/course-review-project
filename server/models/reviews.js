@@ -7,6 +7,7 @@ const reviewSchema = new Schema({
   overallDifficulty: Number,
   assignmentDifficulty: Number,
   examDifficulty: Number,
+  grade:String,
   textReview: String,
 });
 

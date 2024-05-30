@@ -21,11 +21,10 @@ const reviewSchema = yup.object({
     .number()
     .required("Exam Difficulty is required")
     .oneOf([1, 2, 3, 4, 5], "Exam Difficulty must be between 1 and 5"),
+  grade: yup.string().oneOf(['A','A-','B','B-','C','C-','D','E']),
   textReview: yup
-    .string()
-    .required("Text Review is required")
-    .min(10, "Text Review must be at least 10 characters")
-    .max(1000, "Text Review cannot be more than 1000 characters"),
+    .string(),
+  
 });
 
 module.exports = {
