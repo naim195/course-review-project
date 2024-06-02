@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
 
-const pages = ["Courses", "Instructors", "Reviews"];
+const pages = ["Courses", "Instructors"];
 const settings = ["Logout"];
 
 function ResponsiveAppBar() {
@@ -55,7 +55,7 @@ function ResponsiveAppBar() {
               textDecoration: "none",
             }}
           >
-            COURSELY
+            COURSE-REVIEW
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -111,7 +111,7 @@ function ResponsiveAppBar() {
               textDecoration: "none",
             }}
           >
-            COURSELY
+            COURSE-REVIEW
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
