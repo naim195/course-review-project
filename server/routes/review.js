@@ -6,9 +6,11 @@ const { reviewSchema } = require("../schemas");
 const validate = require("../middleware/validate");
 const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
+const { isAuthenticated } = require("../middleware/auth");
 
 router.post(
   "/",
+  isAuthenticated,
   validate(reviewSchema),
   catchAsync(async (req, res) => {
     const { courseId } = req.params;
@@ -18,7 +20,10 @@ router.post(
     if (!course) {
       throw new ExpressError("Course not found", 404);
     }
-    const review = new Review(reviewData);
+    const review = new Review({
+      ...reviewData,
+      author: req.user._id,
+    });
     course.reviews.push(review);
     await review.save();
     await course.save();
@@ -29,6 +34,7 @@ router.post(
 
 router.delete(
   "/:reviewId",
+  isAuthenticated,
   catchAsync(async (req, res) => {
     const { courseId, reviewId } = req.params;
     const course = await Course.findById(courseId);

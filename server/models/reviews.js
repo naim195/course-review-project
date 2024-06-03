@@ -7,8 +7,12 @@ const reviewSchema = new Schema({
   overallDifficulty: Number,
   assignmentDifficulty: Number,
   examDifficulty: Number,
-  grade:String,
+  grade: String,
   textReview: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 module.exports = mongoose.model("Review", reviewSchema);
