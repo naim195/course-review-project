@@ -8,7 +8,7 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const courses = await Courses.find({});
-
+    
     res.send(courses);
   }),
 );

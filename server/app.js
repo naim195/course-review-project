@@ -5,7 +5,7 @@ const compression = require("compression");
 const passport = require("passport");
 const session = require("express-session");
 const cookieSession = require("cookie-session");
-require("./passportConfig");
+require("./passport");
 const ExpressError = require("./utils/ExpressError");
 
 const courses = require("./routes/course");
@@ -27,7 +27,8 @@ mongoose
 // Middleware
 app.use(compression());
 app.use(cors({
-  origin: "http://localhost:5173", // Update this to your client URL
+  origin: "http://localhost:5173",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 }));
 app.use(express.json());

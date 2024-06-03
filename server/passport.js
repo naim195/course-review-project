@@ -16,15 +16,17 @@ passport.use(
       callbackURL: "http://localhost:3000/google/callback",
       passReqToCallback: true,
     },
-    async (req, accessToken, refreshToken, profile, done) => {
+    async (req, res, accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
+       
         if (!user) {
           user = new User({
             googleId: profile.id,
             displayName: profile.displayName,
             email: profile.emails[0].value,
           });
+          
           await user.save();
         }
         done(null, user);

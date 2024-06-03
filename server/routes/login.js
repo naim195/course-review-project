@@ -3,7 +3,7 @@ const passport = require('passport');
 
 const router = express.Router();
 
-const successLoginUrl = 'http://localhost:5173/login/success';
+//const successLoginUrl = 'http://localhost:5173/login/success';
 const failureLoginUrl = 'http://localhost:5173/login/error';
 
 router.get("/auth/google",
@@ -11,11 +11,21 @@ router.get("/auth/google",
 )
 
 router.get('/google/callback', passport.authenticate('google', {
-  successRedirect: successLoginUrl,
-    failureRedirect: failureLoginUrl,
-  failureFlash:"Something went wrong",
+  failureRedirect: failureLoginUrl,
+  failureFlash: "Something went wrong",
 }), (req, res) => {
-    res.send("Thanks for signing in");
+  // Send the user data back to the frontend
+  res.send(`
+      <script>
+          window.opener.postMessage({ user: ${JSON.stringify(req.user)} }, '*');
+          window.close();
+      </script>
+  `);
+});
+
+router.get('/auth/logout', (req, res) => {
+  req.logout();
+  console.log('Logged out succesfully!!')
 })
 
 module.exports = router;

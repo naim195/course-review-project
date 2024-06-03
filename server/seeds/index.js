@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const courseList = require("../seeds/coursesList");
 const Course = require("../models/course");
+const Review = require("../models/reviews")
+const User = require("../models/user")
 
 mongoose.connect("mongodb://127.0.0.1:27017/coursereview");
 
@@ -39,6 +41,9 @@ const seedDb = async () => {
   let courseCategory = "";
 
   await Course.deleteMany({});
+  await User.deleteMany({});
+  await Review.deleteMany({});
+
 
   for (const indCourse of courseList) {
     if (

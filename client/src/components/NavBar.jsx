@@ -12,11 +12,28 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
+import PropTypes from 'prop-types';
+
+// Define a PropTypes shape for the user object
+const userShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  googleId: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  reviews: PropTypes.array.isRequired,
+  __v: PropTypes.number.isRequired,
+});
+
+// Then, in your component's propTypes
+ResponsiveAppBar.propTypes = {
+  user: userShape,
+  handleGoogleSignIn: PropTypes.func.isRequired,
+};
 
 const pages = ["Courses", "Instructors"];
 const settings = ["Logout"];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar({user,handleGoogleSignIn }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -126,23 +143,29 @@ function ResponsiveAppBar() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
+            {user ? (
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Button color="inherit" onClick={handleGoogleSignIn}>
+                Sign in
+              </Button>
+            )}
             <Menu
-              sx={{ mt: "45px" }}
+              sx={{ mt: '45px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               }}
               keepMounted
               transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
+                vertical: 'top',
+                horizontal: 'right',
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
@@ -159,4 +182,5 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
+
 export default ResponsiveAppBar;

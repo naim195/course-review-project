@@ -15,8 +15,23 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
-export default function CourseList({ courses, setCourses }) {
+CourseList.propTypes = {
+  courses: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      code: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      instructor: PropTypes.arrayOf(PropTypes.string).isRequired,
+      category: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  setCourses: PropTypes.func.isRequired,
+  user: PropTypes.object,
+};
+
+export default function CourseList({ courses, setCourses,user }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
@@ -51,10 +66,10 @@ export default function CourseList({ courses, setCourses }) {
 
   useEffect(() => {
     fetchCourses();
-  }, []);
+  });
 
   const handleCardClick = (id) => {
-    navigate(`/courses/${id}`);
+    navigate(`/courses/${id}`,{state:{user}});
   };
 
   const handleSearchChange = (event) => {
@@ -66,13 +81,13 @@ export default function CourseList({ courses, setCourses }) {
     }
   };
 
-  const filteredCourses = courses.filter((course) => {
+  const filteredCourses = courses?courses.filter((course) => {
     if (searchTerm === "") return true;
     if (searchCategory === "name")
       return course.name.toLowerCase().includes(searchTerm.toLowerCase());
     else if (searchCategory === "code")
       return course.code.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  }):[];
 
   const groupedCourses = filteredCourses.reduce((acc, course) => {
     const category = course.category;
