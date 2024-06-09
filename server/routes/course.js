@@ -8,7 +8,7 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const courses = await Courses.find({});
-    
+
     res.send(courses);
   }),
 );
@@ -24,7 +24,5 @@ router.get(
     res.send(course);
   }),
 );
-
-
 
 module.exports = router;

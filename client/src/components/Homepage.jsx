@@ -1,8 +1,4 @@
 const Homepage = () => {
-  
-
-  
-
   return (
     <div>
       <a href="/courses">Go to courses</a>

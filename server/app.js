@@ -5,6 +5,8 @@ const compression = require("compression");
 const passport = require("passport");
 const session = require("express-session");
 const cookieSession = require("cookie-session");
+const MongoStore = require("connect-mongo");
+
 require("./passport");
 const ExpressError = require("./utils/ExpressError");
 
@@ -13,10 +15,11 @@ const reviews = require("./routes/review");
 const login = require("./routes/login");
 
 const app = express();
+const mongoURL = "mongodb://127.0.0.1:27017/coursereview";
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb://127.0.0.1:27017/coursereview")
+  .connect(mongoURL)
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -26,23 +29,30 @@ mongoose
 
 // Middleware
 app.use(compression());
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  }),
+);
 app.use(express.json());
-
-// app.use(cookieSession({
-//   maxAge: 24 * 60 * 60 * 1000,
-//   keys: ['very-secret-key']
-// }));
 
 app.use(
   session({
     secret: "your-secret-key",
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: mongoURL,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: false,
+      httpOnly: true,
+      sameSite: "strict",
+    },
   }),
 );
 app.use(passport.initialize());

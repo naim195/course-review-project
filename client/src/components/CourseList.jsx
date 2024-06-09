@@ -1,21 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import {
-  Alert,
-  CardActionArea,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import { Tabs, Tab, Box, Typography } from "@mui/material";
 
 CourseList.propTypes = {
   courses: PropTypes.arrayOf(
@@ -25,32 +12,45 @@ CourseList.propTypes = {
       name: PropTypes.string.isRequired,
       instructor: PropTypes.arrayOf(PropTypes.string).isRequired,
       category: PropTypes.string.isRequired,
-    })
+    }),
   ).isRequired,
   setCourses: PropTypes.func.isRequired,
   user: PropTypes.object,
 };
 
-export default function CourseList({ courses, setCourses,user }) {
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+export default function CourseList({ courses, setCourses, user }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
   const [loading, setLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
-  const categoryToDisplayName = {
-    "core-ce": "Civil Engg. Core Courses",
-    "core-cl": "Chemical Engg. Core Courses",
-    "core-cs": "Computer Science & Engg. Core Courses",
-    "core-me": "Mechanical Engg Core Courses",
-    "core-mse": "Materials Science & Engg Core Courses",
-    "core-ee": "Electrical Engg Core Courses",
-    humanities: "Humanities Courses",
-    management: "Management Courses",
-    "maths-basket": "Mathematics Basket",
-    "science-basket": "Science Basket",
-    "es-misc": "ES Courses",
-    misc: "Other Courses",
-  };
+  const [activeTab, setActiveTab] = useState(0);
 
   const fetchCourses = async () => {
     try {
@@ -66,28 +66,32 @@ export default function CourseList({ courses, setCourses,user }) {
 
   useEffect(() => {
     fetchCourses();
-  });
+  }, []);
 
   const handleCardClick = (id) => {
-    navigate(`/courses/${id}`,{state:{user}});
+    navigate(`/courses/${id}`, { state: { user } });
   };
 
   const handleSearchChange = (event) => {
     if (searchCategory !== "") {
       setSearchTerm(event.target.value);
       setShowAlert(false);
+      setActiveTab(0); // Reset to the first tab on search
     } else {
       setShowAlert(true);
     }
   };
 
-  const filteredCourses = courses?courses.filter((course) => {
-    if (searchTerm === "") return true;
-    if (searchCategory === "name")
-      return course.name.toLowerCase().includes(searchTerm.toLowerCase());
-    else if (searchCategory === "code")
-      return course.code.toLowerCase().includes(searchTerm.toLowerCase());
-  }):[];
+  const filteredCourses = courses
+    ? courses.filter((course) => {
+        if (searchTerm === "") return true;
+        if (searchCategory === "name")
+          return course.name.toLowerCase().includes(searchTerm.toLowerCase());
+        else if (searchCategory === "code")
+          return course.code.toLowerCase().includes(searchTerm.toLowerCase());
+        return true;
+      })
+    : [];
 
   const groupedCourses = filteredCourses.reduce((acc, course) => {
     const category = course.category;
@@ -98,67 +102,81 @@ export default function CourseList({ courses, setCourses,user }) {
     return acc;
   }, {});
 
+  const tabHeaders = Object.keys(groupedCourses);
+
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
   }
 
   return (
-    <>
-      <h1>All Courses</h1>
-      <TextField
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-        onClick={(e) => e.stopPropagation()}
-      />
-      <FormControl sx={{ minWidth: 120 }}>
-        <InputLabel id="search-options">Search by</InputLabel>
-        <Select
-          label="Search by"
-          labelId="search-options"
+    <div className="mx-8">
+      <h1 className="text-3xl font-bold mb-4">All Courses</h1>
+      <div className="mb-4 flex gap-4">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onClick={(e) => e.stopPropagation()}
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+        />
+        <select
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
         >
-          <MenuItem value={""}>Select Category</MenuItem>
-          <MenuItem value={"code"}>Course Code</MenuItem>
-          <MenuItem value={"name"}>Course Name</MenuItem>
-        </Select>
-      </FormControl>
+          <option value="">Select Category</option>
+          <option value="code">Course Code</option>
+          <option value="name">Course Name</option>
+        </select>
+      </div>
       {showAlert && (
-        <Alert severity="error" variant="outlined">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+          role="alert"
+        >
           Please select a category before searching.
-        </Alert>
+        </div>
       )}
 
-      {Object.keys(groupedCourses).map((category) => (
-        <div key={category}>
-          <h2>{categoryToDisplayName[category]}</h2>
-          <Grid container spacing={3}>
-            {groupedCourses[category].map((course) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={course._id}>
-                <Card sx={{ minWidth: 275, marginBottom: 2 }}>
-                  <CardActionArea onClick={() => handleCardClick(course._id)}>
-                    <CardContent>
-                      <Typography
-                        variant="h4"
-                        align="left"
-                        sx={{ color: "red" }}
-                      >
-                        {course.code}
-                      </Typography>
-                      <Typography variant="h6">{course.name}</Typography>
-                      <Typography variant="body2">
-                        {course.instructor.join(",")}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
-      ))}
-    </>
+      <Box sx={{ width: "100%" }}>
+        <Tabs
+          value={activeTab}
+          onChange={(event, newValue) => setActiveTab(newValue)}
+          aria-label="course tabs"
+        >
+          {tabHeaders.map((tabHeader, index) => (
+            <Tab key={index} label={tabHeader} />
+          ))}
+        </Tabs>
+        {tabHeaders.map((tabHeader, index) => (
+          <TabPanel key={index} value={activeTab} index={index}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {groupedCourses[tabHeader].map((course) => (
+                <div
+                  key={course._id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                  onClick={() => handleCardClick(course._id)}
+                >
+                  <div className="p-4">
+                    <h3 className="text-xl font-bold text-red-600 mb-2">
+                      {course.code}
+                    </h3>
+                    <h4 className="text-lg font-medium mb-2">{course.name}</h4>
+                    <p className="text-gray-600">
+                      {course.instructor.join(", ")}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabPanel>
+        ))}
+      </Box>
+    </div>
   );
 }
