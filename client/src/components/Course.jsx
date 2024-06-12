@@ -35,7 +35,7 @@ export default function Course() {
       rating: 0,
       effortForGoodGrade: 0,
       overallDifficulty: 0,
-      assignmentDifficulty: 0,
+      instructorRating: 0,
       examDifficulty: 0,
       textReview: "",
       grade: "",
@@ -58,6 +58,7 @@ export default function Course() {
       if (response.status === 200) {
         setCourseData(response.data);
         setReviews(response.data.reviews || []);
+        console.log(courseData);
       } else {
         throw new Error(response.data.message);
       }
@@ -81,7 +82,7 @@ export default function Course() {
         rating: 0,
         effortForGoodGrade: 0,
         overallDifficulty: 0,
-        assignmentDifficulty: 0,
+        instructorRating: 0,
         examDifficulty: 0,
         textReview: "",
         grade: "",
@@ -109,6 +110,10 @@ export default function Course() {
     }
   };
 
+  const hasUserReviewedBefore = () => {
+    if(user) return reviews.some((review) => review.author === user._id);
+  }
+
   return (
     <Container maxWidth="md">
       {error ? (
@@ -133,7 +138,7 @@ export default function Course() {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="body1">
-                      Instructor: {courseData.instructor}
+                        Instructor: {courseData.instructor&&courseData.instructor.join(', ')}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -159,22 +164,24 @@ export default function Course() {
                   Overall Difficulty: {review.overallDifficulty}
                 </Typography>
                 <Typography variant="body2" gutterBottom>
-                  Assignment Difficulty: {review.assignmentDifficulty}
+                  Instructor Rating: {review.instructorRating}
                 </Typography>
                 <Typography variant="body2" gutterBottom>
                   Exam Difficulty: {review.examDifficulty}
                 </Typography>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDelete(review._id)}
-                >
-                  Delete
-                </Button>
+                {user && review.author === user._id && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDelete(review._id)}
+                  >
+                    Delete
+                  </Button>
+                )}
               </div>
             ))}
           </div>
-          <Box my={4}>
+          {!hasUserReviewedBefore()&&<Box my={4}>
             <Paper elevation={3} className="p-6">
               <Typography variant="h5" component="h2" gutterBottom>
                 Add a Review
@@ -269,11 +276,11 @@ export default function Course() {
                     )}
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography id="assignmentDifficulty-slider" gutterBottom>
-                      Assignment Difficulty
+                    <Typography id="instructorRating-slider" gutterBottom>
+                      Instructor Rating
                     </Typography>
                     <Controller
-                      name="assignmentDifficulty"
+                      name="instructorRating"
                       control={control}
                       rules={{ required: true, min: 1, max: 5 }}
                       render={({ field }) => (
@@ -290,7 +297,7 @@ export default function Course() {
                         />
                       )}
                     />
-                    {errors.assignmentDifficulty && (
+                    {errors.instructorRating && (
                       <Typography color="error">
                         Assignment Difficulty is required and must be between 1
                         and 5.
@@ -381,7 +388,7 @@ export default function Course() {
                 </Grid>
               </form>
             </Paper>
-          </Box>
+          </Box>}
         </>
       )}
     </Container>

@@ -13,7 +13,7 @@ const reviewSchema = yup.object({
     .number()
     .required("Overall Difficulty is required")
     .oneOf([1, 2, 3, 4, 5], "Overall Difficulty must be between 1 and 5"),
-  assignmentDifficulty: yup
+  instructorRating: yup
     .number()
     .required("Assignment Difficulty is required")
     .oneOf([1, 2, 3, 4, 5], "Assignment Difficulty must be between 1 and 5"),
@@ -25,6 +25,17 @@ const reviewSchema = yup.object({
   textReview: yup.string(),
 });
 
+const userSchema = yup.object({
+  googleId: yup.string().required("Google ID is required"),
+  displayName: yup.string().required("Display Name is required"),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Invalid email format"),
+  reviews: yup.array().of(yup.string().matches(/^[0-9a-fA-F]{24}$/, "Invalid review ID")),
+});
+
 module.exports = {
   reviewSchema,
+  userSchema,
 };

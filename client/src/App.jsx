@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import axios from "axios";
 import NavBar from "./components/NavBar";
@@ -12,6 +12,10 @@ import Login from "./components/Login";
 function App() {
   const [courses, setCourses] = useState([]);
   const [user, setUser] = useState();
+
+  useEffect(() => {
+    isAuthenticated();
+  },[])
 
   const handleGoogleSignIn = async () => {
     try {
@@ -40,19 +44,29 @@ function App() {
       });
 
       // Handle the response data (user data) from the server
-      console.log(data);
       setUser(data.user);
     } catch (error) {
       console.error("Google sign-in failed:", error);
     }
   };
 
+  const isAuthenticated = async () => {
+    try{const response = await axios.get('http://localhost:3000/auth/check', { withCredentials: true });
+    if (response.status == 200) {
+      setUser(response.data.user);
+      }
+    }
+    catch(error) {
+      console.error('Auth failed',error);
+    }
+  }
+
   const handleLogout = async () => {
     try {
       const response = await axios.get("http://localhost:3000/auth/logout", {
         withCredentials: true,
       });
-
+      console.log('Accessed frontend function')
       if (response.status === 200) {
         setUser(null); // Clear user state after successful logout
         console.log("Logged out successfully");

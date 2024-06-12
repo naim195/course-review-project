@@ -5,7 +5,7 @@ const reviewSchema = new Schema({
   rating: Number,
   effortForGoodGrade: Number,
   overallDifficulty: Number,
-  assignmentDifficulty: Number,
+  instructorRating: Number,
   examDifficulty: Number,
   grade: String,
   textReview: String,

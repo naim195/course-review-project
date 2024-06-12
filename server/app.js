@@ -4,8 +4,8 @@ const cors = require("cors");
 const compression = require("compression");
 const passport = require("passport");
 const session = require("express-session");
-const cookieSession = require("cookie-session");
 const MongoStore = require("connect-mongo");
+const dotenv = require('dotenv');
 
 require("./passport");
 const ExpressError = require("./utils/ExpressError");
@@ -16,6 +16,7 @@ const login = require("./routes/login");
 
 const app = express();
 const mongoURL = "mongodb://127.0.0.1:27017/coursereview";
+dotenv.config();
 
 // MongoDB Connection
 mongoose
@@ -40,21 +41,22 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: "your-secret-key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: mongoURL,
       collectionName: "sessions",
     }),
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000,
-      secure: false,
+      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+      maxAge: 24 * 60 * 60 * 1000,      
       httpOnly: true,
-      sameSite: "strict",
+      
     },
   }),
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 

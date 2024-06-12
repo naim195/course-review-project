@@ -2,6 +2,7 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user");
+const { userSchema } = require("./schemas");
 
 dotenv.config();
 
@@ -19,14 +20,13 @@ passport.use(
     async (req, res, accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
-
         if (!user) {
           user = new User({
             googleId: profile.id,
             displayName: profile.displayName,
             email: profile.emails[0].value,
           });
-
+          await userSchema.validate(user);
           await user.save();
         }
         done(null, user);

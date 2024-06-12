@@ -31,7 +31,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component="div">{children}</Typography>
         </Box>
       )}
     </div>
@@ -147,6 +147,8 @@ export default function CourseList({ courses, setCourses, user }) {
         <Tabs
           value={activeTab}
           onChange={(event, newValue) => setActiveTab(newValue)}
+          variant="scrollable"
+          scrollButtons="auto"
           aria-label="course tabs"
         >
           {tabHeaders.map((tabHeader, index) => (

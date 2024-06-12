@@ -28,6 +28,15 @@ router.get(
   },
 );
 
+router.get('/auth/check', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).json({ user:req.user });
+  }
+  else {
+    res.status(401).json({ user: null });
+  }
+})
+
 router.get("/auth/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {

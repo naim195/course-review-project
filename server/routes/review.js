@@ -18,7 +18,7 @@ router.post(
 
     const course = await Course.findById(courseId).populate("reviews");
     const user = await User.findById(reviewData.user._id);
-    console.log(user);
+    
 
     if (!course) {
       throw new ExpressError("Course not found", 404);
@@ -30,13 +30,13 @@ router.post(
 
     course.reviews.push(review);
     user.reviews.push(review);
-    console.log(user);
+    
 
     await review.save();
     await course.save();
     await user.save();
     res.status(201).json(review); //gives response to frontend
-    console.log("review added succesfully");
+    
   }),
 );
 
