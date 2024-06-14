@@ -8,7 +8,6 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const courses = await Courses.find({});
-
     res.send(courses);
   }),
 );
@@ -19,7 +18,8 @@ router.get(
     const { id } = req.params;
     const course = await Courses.findById(id).populate("reviews");
     if (!course) {
-      throw new ExpressError("Course not found", 404);
+      res.status(404).json({ error: "Course not found" });
+      throw new ExpressError("Course not found", 404);      
     }
     res.send(course);
   }),

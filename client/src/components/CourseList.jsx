@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Tabs, Tab, Box, Typography } from "@mui/material";
@@ -52,7 +52,7 @@ export default function CourseList({ courses, setCourses, user }) {
   const [showAlert, setShowAlert] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/courses");
       const coursesData = response.data;
@@ -62,11 +62,12 @@ export default function CourseList({ courses, setCourses, user }) {
     } finally {
       setLoading(false);
     }
-  };
-
+  }, [setCourses]); 
+  
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [fetchCourses]);
+  
 
   const handleCardClick = (id) => {
     navigate(`/courses/${id}`, { state: { user } });
@@ -76,7 +77,7 @@ export default function CourseList({ courses, setCourses, user }) {
     if (searchCategory !== "") {
       setSearchTerm(event.target.value);
       setShowAlert(false);
-      setActiveTab(0); // Reset to the first tab on search
+      setActiveTab(0);
     } else {
       setShowAlert(true);
     }

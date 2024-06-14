@@ -15,7 +15,7 @@ import {
   FormLabel,
 } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 
@@ -46,11 +46,9 @@ export default function Course() {
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchCourseData(courseId);
-  }, [courseId]);
+  
 
-  const fetchCourseData = async (courseId) => {
+  const fetchCourseData = useCallback(async (courseId) => {
     try {
       const response = await axios.get(
         `http://localhost:3000/courses/${courseId}`,
@@ -58,17 +56,22 @@ export default function Course() {
       if (response.status === 200) {
         setCourseData(response.data);
         setReviews(response.data.reviews || []);
-        console.log(courseData);
       } else {
-        throw new Error(response.data.message);
+        console.log('error in if else upper');
+        throw new Error(response.data.error);
       }
     } catch (error) {
-      setError(error.message || "An error occurred while fetching course data");
+      console.log(error);
+      setError(error.response?.data?.error || "An error occurred while fetching course data");
       setCourseData({});
       setReviews([]);
     }
-  };
+  },[]);
 
+  useEffect(() => {
+    fetchCourseData(courseId);
+  }, [courseId, fetchCourseData]);
+  
   const onSubmit = async (data) => {
     try {
       const payload = { ...data, user };
@@ -88,12 +91,8 @@ export default function Course() {
         grade: "",
       });
     } catch (error) {
-      console.error(
-        "Error submitting review:",
-        error.response?.data || error.message,
-      );
       setError(
-        error.response?.data?.message ||
+        error.response?.data?.error ||
           "An error occurred while submitting the review",
       );
     }

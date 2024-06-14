@@ -7,7 +7,7 @@ import CourseList from "./components/CourseList";
 import Course from "./components/Course";
 import Homepage from "./components/Homepage";
 import NotFound from "./components/NotFound";
-import Login from "./components/Login";
+
 
 function App() {
   const [courses, setCourses] = useState([]);
@@ -94,7 +94,6 @@ function App() {
             <CourseList courses={courses} setCourses={setCourses} user={user} />
           }
         />
-        <Route path="/login/success" element={<Login />} />
         <Route path="/courses/:courseId" element={<Course />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
