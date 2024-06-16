@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Review = require("./reviews");
 
 const courseSchema = new Schema({
   name: String,
   code: String,
-  instructor: [String],
+  instructor: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Instructor",
+    },
+  ],
   category: String,
   reviews: [
     {

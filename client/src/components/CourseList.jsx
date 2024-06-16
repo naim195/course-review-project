@@ -2,7 +2,18 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Tabs, Tab, Box, Typography } from "@mui/material";
+import {
+  Tabs,
+  Tab,
+  Box,
+  Typography,
+  TextField,
+  MenuItem,
+  CircularProgress,
+  Alert,
+  Card,
+  CardContent,
+} from "@mui/material";
 
 CourseList.propTypes = {
   courses: PropTypes.arrayOf(
@@ -62,12 +73,11 @@ export default function CourseList({ courses, setCourses, user }) {
     } finally {
       setLoading(false);
     }
-  }, [setCourses]); 
-  
+  }, [setCourses]);
+
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
-  
 
   const handleCardClick = (id) => {
     navigate(`/courses/${id}`, { state: { user } });
@@ -107,43 +117,51 @@ export default function CourseList({ courses, setCourses, user }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
-      </div>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
     );
   }
 
   return (
-    <div className="mx-8">
-      <h1 className="text-3xl font-bold mb-4">All Courses</h1>
-      <div className="mb-4 flex gap-4">
-        <input
-          type="text"
-          placeholder="Search..."
+    <Box sx={{ mx: 4, marginTop: 4 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
+        All Courses
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+        <TextField
+          label="Search"
           value={searchTerm}
           onChange={handleSearchChange}
           onClick={(e) => e.stopPropagation()}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          variant="outlined"
+          fullWidth
         />
-        <select
+        <TextField
+          select
+          label="Select Category"
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          variant="outlined"
+          sx={{ minWidth: 200 }}
         >
-          <option value="">Select Category</option>
-          <option value="code">Course Code</option>
-          <option value="name">Course Name</option>
-        </select>
-      </div>
+          <MenuItem value="">Select Category</MenuItem>
+          <MenuItem value="code">Course Code</MenuItem>
+          <MenuItem value="name">Course Name</MenuItem>
+        </TextField>
+      </Box>
       {showAlert && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
-          role="alert"
-        >
+        <Alert severity="error" sx={{ mb: 4 }}>
           Please select a category before searching.
-        </div>
+        </Alert>
       )}
-
       <Box sx={{ width: "100%" }}>
         <Tabs
           value={activeTab}
@@ -158,28 +176,53 @@ export default function CourseList({ courses, setCourses, user }) {
         </Tabs>
         {tabHeaders.map((tabHeader, index) => (
           <TabPanel key={index} value={activeTab} index={index}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <Box
+              sx={{
+                display: "grid",
+                gap: 2,
+                gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              }}
+            >
               {groupedCourses[tabHeader].map((course) => (
-                <div
+                <Card
                   key={course._id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                  sx={{
+                    cursor: "pointer",
+                    transition: "box-shadow 0.3s",
+                    "&:hover": { boxShadow: 6 },
+                  }}
                   onClick={() => handleCardClick(course._id)}
                 >
-                  <div className="p-4">
-                    <h3 className="text-xl font-bold text-red-600 mb-2">
+                  <CardContent>
+                    <Typography
+                      variant="h5"
+                      component="div"
+                      color="error.main"
+                      gutterBottom
+                      sx={{ fontWeight: "medium" }}
+                    >
                       {course.code}
-                    </h3>
-                    <h4 className="text-lg font-medium mb-2">{course.name}</h4>
-                    <p className="text-gray-600">
-                      {course.instructor.join(", ")}
-                    </p>
-                  </div>
-                </div>
+                    </Typography>
+                    <Typography
+                      variant="subtitle1"
+                      component="div"
+                      gutterBottom
+                    >
+                      {course.name}
+                    </Typography>
+
+                    <Typography variant="body2">
+                      {course.instructor
+                        .map((instructor) => instructor.name)
+                        .join(", ")}
+                    </Typography>
+                  </CardContent>
+                </Card>
               ))}
-            </div>
+            </Box>
           </TabPanel>
         ))}
       </Box>
-    </div>
+    </Box>
   );
 }

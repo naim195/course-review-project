@@ -3,6 +3,7 @@ const courseList = require("../seeds/coursesList");
 const Course = require("../models/course");
 const Review = require("../models/reviews");
 const User = require("../models/user");
+const Instructor = require("../models/instructor");
 
 mongoose.connect("mongodb://127.0.0.1:27017/coursereview");
 
@@ -78,37 +79,64 @@ const getCourseCategory = (courseCode, courseName) => {
 };
 
 const seedDb = async () => {
-  let courseCategory = "";
+  try {
+    await Course.deleteMany({});
+    await User.deleteMany({});
+    await Review.deleteMany({});
+    await Instructor.deleteMany({});
 
-  await Course.deleteMany({});
-  await User.deleteMany({});
-  await Review.deleteMany({});
+    for (const indCourse of courseList) {
+      if (
+        indCourse["Course Code"] &&
+        "Course Name" in indCourse &&
+        indCourse["Course Name"] &&
+        "Instructor" in indCourse
+      ) {
+        const instructorNames = indCourse.Instructor.split(",")
+          .map((s) => s.trim())
+          .filter((s) => s.includes("(I") || s.includes("(L"))
+          .map((s) => {
+            const index = s.indexOf("(");
+            return index !== -1 ? s.substring(0, index).trim() : s;
+          });
 
-  for (const indCourse of courseList) {
-    if (
-      indCourse["Course Code"] &&
-      "Course Name" in indCourse &&
-      indCourse["Course Name"] &&
-      "Instructor" in indCourse
-    ) {
-      const instructors = indCourse.Instructor.split(",")
-        .filter((s) => s.includes("(I") || s.includes("(L"))
-        .map((s) => s.trim());
+        const courseCategory = getCourseCategory(
+          indCourse["Course Code"],
+          indCourse["Course Name"],
+        );
 
-      courseCategory = getCourseCategory(
-        indCourse["Course Code"],
-        indCourse["Course Name"],
-      );
+        const instructors = [];
 
-      const course = new Course({
-        name: indCourse["Course Name"],
-        code: indCourse["Course Code"],
-        instructor: instructors,
-        category: courseCategory,
-      });
+        // Create instructors and add them to the course
+        for (const name of instructorNames) {
+          let instructor = await Instructor.findOne({ name: name });
 
-      await course.save();
+          if (!instructor) {
+            instructor = new Instructor({
+              name: name,
+            });
+            await instructor.save();
+          }
+
+          instructors.push(instructor);
+        }
+
+        const course = new Course({
+          name: indCourse["Course Name"],
+          code: indCourse["Course Code"],
+          category: courseCategory,
+          instructor: instructors, // Assign array of instructors
+        });
+
+        await course.save();
+      }
     }
+
+    console.log("Database seeding completed successfully");
+    process.exit(0); // Exit the script after seeding
+  } catch (err) {
+    console.error("Error seeding database:", err);
+    process.exit(1); // Exit with error
   }
 };
 

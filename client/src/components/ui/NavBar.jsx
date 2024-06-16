@@ -34,7 +34,7 @@ ResponsiveAppBar.propTypes = {
 const pages = ["Courses", "Instructors"];
 const settings = ["Logout"];
 
-function ResponsiveAppBar({ user, handleGoogleSignIn,handleLogout }) {
+function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -172,11 +172,13 @@ function ResponsiveAppBar({ user, handleGoogleSignIn,handleLogout }) {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-
-                <MenuItem key={setting} onClick={() => {
-                  handleLogout();
-                  handleCloseUserMenu();
-                }}>
+                <MenuItem
+                  key={setting}
+                  onClick={() => {
+                    handleLogout();
+                    handleCloseUserMenu();
+                  }}
+                >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

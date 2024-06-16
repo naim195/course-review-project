@@ -19,6 +19,7 @@ router.get(
   }),
   (req, res) => {
     // Send the user data back to the frontend
+    console.log("Signed in successfully!!");
     res.send(`
       <script>
           window.opener.postMessage({ user: ${JSON.stringify(req.user)} }, '*');
@@ -28,14 +29,13 @@ router.get(
   },
 );
 
-router.get('/auth/check', (req, res) => {
+router.get("/auth/check", (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).json({ user:req.user });
-  }
-  else {
+    res.status(200).json({ user: req.user });
+  } else {
     res.status(401).json({ user: null });
   }
-})
+});
 
 router.get("/auth/logout", (req, res, next) => {
   req.logout((err) => {

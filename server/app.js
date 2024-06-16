@@ -5,7 +5,7 @@ const compression = require("compression");
 const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 
 require("./passport");
 const ExpressError = require("./utils/ExpressError");
@@ -50,9 +50,8 @@ app.use(
     }),
     cookie: {
       expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-      maxAge: 24 * 60 * 60 * 1000,      
+      maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
-      
     },
   }),
 );
