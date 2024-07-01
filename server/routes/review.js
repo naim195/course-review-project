@@ -26,6 +26,7 @@ router.post(
     if (!course) {
       throw new ExpressError("Course not found", 404);
     }
+
     const review = new Review({
       ...reviewData,
       author: reviewData.user._id,
@@ -39,17 +40,19 @@ router.post(
     await user.save();
 
     for (const instructorRating of reviewData.instructorRating) {
-      const instructor = await Instructor.findOne({
-        name: instructorRating.name,
-      });
+      const instructor = await Instructor.findById(instructorRating.instructorId); // Use instructorId instead of name
       if (instructor) {
         instructor.ratings.push(review);
+        const ratings = await Review.find({ _id: { $in: instructor.ratings } });
+        const totalRatings = ratings.reduce((sum, r) => sum + r.instructorRating.find(ir => ir.instructorId.equals(instructor._id)).rating, 0);
+        const averageRating = ratings.length > 0 ? totalRatings / ratings.length : 0;
+        instructor.averageRating = averageRating;
         await instructor.save();
       }
     }
 
-    res.status(201).json(review); //gives response to frontend
-  }),
+    res.status(201).json(review);
+  })
 );
 
 router.delete(
@@ -64,21 +67,28 @@ router.delete(
       throw new ExpressError("Course not found", 404);
     }
 
+    if (!review) {
+      throw new ExpressError("Review not found", 404);
+    }
+
     // Remove review from course and user
     await Course.findByIdAndUpdate(courseId, { $pull: { reviews: reviewId } });
-    await User.findByIdAndUpdate(review.author, {
-      $pull: { reviews: reviewId },
-    });
+    await User.findByIdAndUpdate(review.author, { $pull: { reviews: reviewId } });
 
-    // Remove review from instructors
+    // Remove review from instructors and update average rating
     for (const instructorRating of review.instructorRating) {
-      const instructor = await Instructor.findOne({
-        name: instructorRating.name,
-      });
+      const instructor = await Instructor.findById(instructorRating.instructorId); // Use instructorId instead of name
       if (instructor) {
-        await Instructor.findByIdAndUpdate(instructor._id, {
-          $pull: { ratings: reviewId },
-        });
+        await Instructor.findByIdAndUpdate(instructor._id, { $pull: { ratings: reviewId } });
+
+        // Recalculate average rating
+        const previousTotalRatings = instructor.averageRating * instructor.ratings.length;
+        const updatedTotalRatings = previousTotalRatings - instructorRating.rating;
+        const updatedRatingsCount = instructor.ratings.length - 1;
+        const newAverageRating = updatedRatingsCount > 0 ? updatedTotalRatings / updatedRatingsCount : 0;
+
+        instructor.averageRating = newAverageRating;
+        await instructor.save();
       }
     }
 
@@ -86,7 +96,8 @@ router.delete(
     await Review.findByIdAndDelete(reviewId);
 
     res.status(200).json({ message: "Review deleted successfully" });
-  }),
+  })
 );
+
 
 module.exports = router;

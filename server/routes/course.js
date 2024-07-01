@@ -3,12 +3,11 @@ const router = express.Router();
 const Courses = require("../models/course");
 const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
-// const validate = require('../middleware/validate');
 
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    const courses = await Courses.find({}).populate("instructor", "name");
+    const courses = await Courses.find({}).populate("instructor", "_id name averageRating"); 
 
     res.send(courses);
   }),
@@ -20,7 +19,15 @@ router.get(
     const { id } = req.params;
     const course = await Courses.findById(id)
       .populate("reviews")
-      .populate("instructor", "name");
+      .populate("instructor", "_id name averageRating")
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author",
+          select: "displayName",
+        },
+      });
+
     if (!course) {
       res.status(404).json({ error: "Course not found" });
       throw new ExpressError("Course not found", 404);

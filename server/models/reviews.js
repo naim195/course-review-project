@@ -7,7 +7,10 @@ const reviewSchema = new Schema({
   overallDifficulty: Number,
   instructorRating: [
     {
-      name: String,
+      instructorId: {
+        type: Schema.Types.ObjectId,
+        ref: "Instructor",
+      },
       rating: Number,
     },
   ],

@@ -80,23 +80,24 @@ export default function Course() {
 
   const onSubmit = async (data) => {
     try {
+      // Format the instructorRating to include instructorId and rating
       const formattedInstructorRating = courseData.instructor.map(
         (instructor, index) => ({
-          name: instructor.name,
+          instructorId: instructor._id, // Use instructorId instead of _id
           rating: data.instructorRating[index].rating,
-        }),
+        })
       );
-
+  
       const payload = {
         ...data,
         instructorRating: formattedInstructorRating,
         user,
       };
-
+  
       const response = await axios.post(
         `http://localhost:3000/courses/${courseId}/reviews`,
         payload,
-        { withCredentials: true },
+        { withCredentials: true }
       );
       setReviews((prev) => [...prev, response.data]);
       reset({
@@ -105,7 +106,7 @@ export default function Course() {
         overallDifficulty: 0,
         instructorRating: courseData.instructor.map(() => ({
           rating: 0,
-          name: "",
+          instructorId: "", // Use instructorId instead of _id
         })),
         examDifficulty: 0,
         textReview: "",
@@ -114,11 +115,12 @@ export default function Course() {
     } catch (error) {
       console.log(error);
       setError(
-        error.response?.data?.error ||
-          "An error occurred while submitting the review",
+        error.response?.data?.message ||
+          "An error occurred while submitting the review"
       );
     }
   };
+  
 
   const handleDelete = async (reviewId) => {
     try {
@@ -133,14 +135,25 @@ export default function Course() {
   };
 
   const hasUserReviewedBefore = () => {
-    if (user) return reviews.some((review) => review.author === user._id);
+    
+    if (user) {
+      return reviews.some((review) => {
+        return review.author._id === user._id;
+      });
+    }
+    return false;
   };
+  
 
-  const instructorNames =
-    courseData && courseData.instructor
-      ? courseData.instructor.map((instructor) => instructor.name).join(", ")
-      : "";
+  const instructorNames = courseData && courseData.instructor
+  ? courseData.instructor.map(instructor => {
+      console.log(instructor); // Debug log
+      return `${instructor.name}${instructor.averageRating ? `(${instructor.averageRating.toFixed(2)})` : ""}`;
+    }).join(", ")
+  : "";
 
+
+  
   return (
     <Container maxWidth="md">
       {error ? (
@@ -164,7 +177,7 @@ export default function Course() {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography variant="body2">{instructorNames}</Typography>
+                      <Typography variant="body2">{instructorNames}</Typography>
                   </Grid>
                 </Grid>
               </Box>
@@ -182,6 +195,9 @@ export default function Course() {
                 <Typography variant="body2" gutterBottom>
                   <Rating value={review.rating} precision={0.5} readOnly />
                 </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {review.author ? review.author.displayName : "Anonymous"}
+                </Typography>
                 {/* <Typography variant="body2" gutterBottom>
                   Effort for Good Grade: {review.effortForGoodGrade}
                 </Typography>
@@ -194,7 +210,7 @@ export default function Course() {
                 <Typography variant="body2" gutterBottom>
                   Exam Difficulty: {review.examDifficulty}
                 </Typography> */}
-                {user && review.author === user._id && (
+                {user && review.author._id === user._id && (
                   <Button
                     variant="contained"
                     color="secondary"
