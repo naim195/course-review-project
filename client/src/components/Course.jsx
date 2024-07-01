@@ -4,20 +4,15 @@ import {
   Paper,
   Typography,
   Container,
-  TextField,
   Button,
   Rating,
-  Slider,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
 } from "@mui/material";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { ReviewForm } from "./ReviewForm";
+import { BarChart } from "@mui/x-charts/BarChart";
 
 export default function Course() {
   const { courseId } = useParams();
@@ -85,19 +80,19 @@ export default function Course() {
         (instructor, index) => ({
           instructorId: instructor._id, // Use instructorId instead of _id
           rating: data.instructorRating[index].rating,
-        })
+        }),
       );
-  
+
       const payload = {
         ...data,
         instructorRating: formattedInstructorRating,
         user,
       };
-  
+
       const response = await axios.post(
         `http://localhost:3000/courses/${courseId}/reviews`,
         payload,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setReviews((prev) => [...prev, response.data]);
       reset({
@@ -116,11 +111,10 @@ export default function Course() {
       console.log(error);
       setError(
         error.response?.data?.message ||
-          "An error occurred while submitting the review"
+          "An error occurred while submitting the review",
       );
     }
   };
-  
 
   const handleDelete = async (reviewId) => {
     try {
@@ -135,7 +129,6 @@ export default function Course() {
   };
 
   const hasUserReviewedBefore = () => {
-    
     if (user) {
       return reviews.some((review) => {
         return review.author._id === user._id;
@@ -143,17 +136,38 @@ export default function Course() {
     }
     return false;
   };
-  
 
-  const instructorNames = courseData && courseData.instructor
-  ? courseData.instructor.map(instructor => {
-      console.log(instructor); // Debug log
-      return `${instructor.name}${instructor.averageRating ? `(${instructor.averageRating.toFixed(2)})` : ""}`;
-    }).join(", ")
-  : "";
+  const instructorNames =
+    courseData && courseData.instructor
+      ? courseData.instructor
+          .map((instructor) => {
+            return `${instructor.name}${instructor.averageRating ? `(${instructor.averageRating.toFixed(2)})` : ""}`;
+          })
+          .join(", ")
+      : "";
 
+  let gradeFreqMap = {
+    A: 0,
+    "A-": 0,
+    B: 0,
+    "B-": 0,
+    C: 0,
+    "C-": 0,
+    D: 0,
+    E: 0,
+  };
 
-  
+  reviews.forEach((review) => {
+    const grade = review.grade;
+    gradeFreqMap[grade]++;
+  });
+
+  let graphData = [];
+
+  for (const [grade, freq] of Object.entries(gradeFreqMap)) {
+    graphData.push({ x: grade, y: freq });
+  }
+
   return (
     <Container maxWidth="md">
       {error ? (
@@ -177,11 +191,21 @@ export default function Course() {
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
-                      <Typography variant="body2">{instructorNames}</Typography>
+                    <Typography variant="body2">{instructorNames}</Typography>
                   </Grid>
                 </Grid>
               </Box>
             </Paper>
+            {reviews.length > 0 && (
+              <BarChart
+                xAxis={[
+                  { scaleType: "band", data: graphData.map((it) => it.x) },
+                ]}
+                series={[{ data: graphData.map((it) => it.y) }]}
+                width={600}
+                height={400}
+              />
+            )}
           </Box>
           <div>
             <Typography variant="h5" component="h2" gutterBottom>
@@ -228,227 +252,14 @@ export default function Course() {
                 <Typography variant="h5" component="h2" gutterBottom>
                   Add a Review
                 </Typography>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Typography id="overallRating-slider" gutterBottom>
-                        Overall Rating
-                      </Typography>
-                      <Controller
-                        name="rating"
-                        control={control}
-                        rules={{ required: true, min: 0.5, max: 5 }}
-                        render={({ field }) => (
-                          <Slider
-                            {...field}
-                            value={field.value || 0}
-                            onChange={(_, newValue) => field.onChange(newValue)}
-                            min={0}
-                            max={5}
-                            step={0.5}
-                            marks
-                            valueLabelDisplay="auto"
-                            className="mb-2"
-                          />
-                        )}
-                      />
-                      {errors.rating && (
-                        <Typography color="error">
-                          Overall Rating is required and must be between 0.5 and
-                          5.
-                        </Typography>
-                      )}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography id="effortForGoodGrade-slider" gutterBottom>
-                        Effort Required for Good Grade
-                      </Typography>
-                      <Controller
-                        name="effortForGoodGrade"
-                        control={control}
-                        rules={{ required: true, min: 1, max: 5 }}
-                        render={({ field }) => (
-                          <Slider
-                            {...field}
-                            value={field.value || 0}
-                            onChange={(_, newValue) => field.onChange(newValue)}
-                            min={0}
-                            max={5}
-                            step={1}
-                            marks
-                            valueLabelDisplay="auto"
-                            className="mb-2"
-                          />
-                        )}
-                      />
-                      {errors.effortForGoodGrade && (
-                        <Typography color="error">
-                          Effort Required for Good Grade is required and must be
-                          between 1 and 5.
-                        </Typography>
-                      )}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography id="overallDifficulty-slider" gutterBottom>
-                        Overall Difficulty
-                      </Typography>
-                      <Controller
-                        name="overallDifficulty"
-                        control={control}
-                        rules={{ required: true, min: 1, max: 5 }}
-                        render={({ field }) => (
-                          <Slider
-                            {...field}
-                            value={field.value || 0}
-                            onChange={(_, newValue) => field.onChange(newValue)}
-                            min={0}
-                            max={5}
-                            step={1}
-                            marks
-                            valueLabelDisplay="auto"
-                            className="mb-2"
-                          />
-                        )}
-                      />
-                      {errors.overallDifficulty && (
-                        <Typography color="error">
-                          Overall Difficulty is required and must be between 1
-                          and 5.
-                        </Typography>
-                      )}
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography id="instructorRating-slider" gutterBottom>
-                        Instructor Rating
-                      </Typography>
-                      {courseData.instructor &&
-                        courseData.instructor.map((instructor, index) => (
-                          <div key={instructor._id || index}>
-                            <Typography>{instructor.name}</Typography>
-                            <Controller
-                              name={`instructorRating.${index}.rating`}
-                              control={control}
-                              rules={{ required: true, min: 1, max: 5 }}
-                              render={({ field }) => (
-                                <Slider
-                                  {...field}
-                                  value={field.value || 0}
-                                  onChange={(_, newValue) =>
-                                    field.onChange(newValue)
-                                  }
-                                  min={0}
-                                  max={5}
-                                  step={1}
-                                  marks
-                                  valueLabelDisplay="auto"
-                                  className="mb-2"
-                                />
-                              )}
-                            />
-                            {errors.instructorRating &&
-                              errors.instructorRating[index]?.rating && (
-                                <Typography color="error">
-                                  Instructor Rating for {instructor.name} is
-                                  required and must be between 1 and 5.
-                                </Typography>
-                              )}
-                            <Controller
-                              name={`instructorRating.${index}.name`}
-                              control={control}
-                              defaultValue={instructor.name}
-                              render={({ field }) => (
-                                <TextField {...field} type="hidden" />
-                              )}
-                            />
-                          </div>
-                        ))}
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography id="examDifficulty-slider" gutterBottom>
-                        Exam Difficulty
-                      </Typography>
-                      <Controller
-                        name="examDifficulty"
-                        control={control}
-                        rules={{ required: true, min: 1, max: 5 }}
-                        render={({ field }) => (
-                          <Slider
-                            {...field}
-                            value={field.value || 0}
-                            onChange={(_, newValue) => field.onChange(newValue)}
-                            min={0}
-                            max={5}
-                            step={1}
-                            marks
-                            valueLabelDisplay="auto"
-                            className="mb-2"
-                          />
-                        )}
-                      />
-                      {errors.examDifficulty && (
-                        <Typography color="error">
-                          Exam Difficulty is required and must be between 1 and
-                          5.
-                        </Typography>
-                      )}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <FormControl component="fieldset">
-                        <FormLabel component="legend">Grade</FormLabel>
-                        <Controller
-                          name="grade"
-                          control={control}
-                          rules={{ required: true }}
-                          render={({ field }) => (
-                            <RadioGroup {...field} row>
-                              {["A", "A-", "B", "B-", "C", "C-", "D", "E"].map(
-                                (grade) => (
-                                  <FormControlLabel
-                                    key={grade}
-                                    value={grade}
-                                    control={<Radio />}
-                                    label={grade}
-                                  />
-                                ),
-                              )}
-                            </RadioGroup>
-                          )}
-                        />
-                        {errors.grade && (
-                          <Typography color="error">
-                            Grade is required.
-                          </Typography>
-                        )}
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Text Review (optional)"
-                        name="textReview"
-                        {...register("textReview", {
-                          minLength: 5,
-                          maxLength: 1000,
-                        })}
-                        fullWidth
-                        multiline
-                        rows={4}
-                        className="mb-2"
-                      />
-                      {errors.textReview && (
-                        <Typography color="error">
-                          Text Review must be between 5 and 1000 characters.
-                        </Typography>
-                      )}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Button variant="contained" color="primary" type="submit">
-                        Submit Review
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </form>
+                <ReviewForm
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  control={control}
+                  errors={errors}
+                  register={register}
+                  courseData={courseData}
+                />
               </Paper>
             </Box>
           )}

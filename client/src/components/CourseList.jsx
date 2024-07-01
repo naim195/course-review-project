@@ -21,7 +21,12 @@ CourseList.propTypes = {
       _id: PropTypes.string.isRequired,
       code: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      instructor: PropTypes.arrayOf(PropTypes.string).isRequired,
+      instructor: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.string.isRequired,
+          name: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
       category: PropTypes.string.isRequired,
     }),
   ).isRequired,
@@ -100,6 +105,10 @@ export default function CourseList({ courses, setCourses, user }) {
           return course.name.toLowerCase().includes(searchTerm.toLowerCase());
         else if (searchCategory === "code")
           return course.code.toLowerCase().includes(searchTerm.toLowerCase());
+        else if (searchCategory === "instructor")
+          return course.instructor.some((instructor) =>
+            instructor.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          );
         return true;
       })
     : [];
@@ -155,6 +164,7 @@ export default function CourseList({ courses, setCourses, user }) {
           <MenuItem value="">Select Category</MenuItem>
           <MenuItem value="code">Course Code</MenuItem>
           <MenuItem value="name">Course Name</MenuItem>
+          <MenuItem value="instructor">Instructor</MenuItem>
         </TextField>
       </Box>
       {showAlert && (
@@ -210,7 +220,6 @@ export default function CourseList({ courses, setCourses, user }) {
                     >
                       {course.name}
                     </Typography>
-
                     <Typography variant="body2">
                       {course.instructor
                         .map((instructor) => instructor.name)

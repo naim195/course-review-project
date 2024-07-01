@@ -7,7 +7,10 @@ const ExpressError = require("../utils/ExpressError");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    const courses = await Courses.find({}).populate("instructor", "_id name averageRating"); 
+    const courses = await Courses.find({}).populate(
+      "instructor",
+      "_id name averageRating",
+    );
 
     res.send(courses);
   }),
