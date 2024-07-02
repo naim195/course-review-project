@@ -17,6 +17,19 @@ const courseSchema = new Schema({
       ref: "Review",
     },
   ],
+  avgOverallDifficulty: {
+    type: Number,
+    default: 0,
+  },
+  avgEffortForGoodGrade: {
+    type: Number,
+    default: 0,
+  },
+  avgRating: {
+    type: Number,
+    default: 0,
+  },
+
 });
 
 module.exports = mongoose.model("Course", courseSchema);

@@ -14,10 +14,6 @@ const reviewSchema = yup.object({
     .required("Overall Difficulty is required")
     .oneOf([1, 2, 3, 4, 5], "Overall Difficulty must be between 1 and 5"),
 
-  examDifficulty: yup
-    .number()
-    .required("Exam Difficulty is required")
-    .oneOf([1, 2, 3, 4, 5], "Exam Difficulty must be between 1 and 5"),
   grade: yup.string().oneOf(["A", "A-", "B", "B-", "C", "C-", "D", "E"]),
   textReview: yup.string(),
 });

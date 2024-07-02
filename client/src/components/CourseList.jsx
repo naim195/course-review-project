@@ -13,6 +13,8 @@ import {
   Alert,
   Card,
   CardContent,
+  Grid,
+  
 } from "@mui/material";
 
 CourseList.propTypes = {
@@ -144,94 +146,98 @@ export default function CourseList({ courses, setCourses, user }) {
       <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
         All Courses
       </Typography>
-      <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
-        <TextField
-          label="Search"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onClick={(e) => e.stopPropagation()}
-          variant="outlined"
-          fullWidth
-        />
-        <TextField
-          select
-          label="Select Category"
-          value={searchCategory}
-          onChange={(e) => setSearchCategory(e.target.value)}
-          variant="outlined"
-          sx={{ minWidth: 200 }}
-        >
-          <MenuItem value="">Select Category</MenuItem>
-          <MenuItem value="code">Course Code</MenuItem>
-          <MenuItem value="name">Course Name</MenuItem>
-          <MenuItem value="instructor">Instructor</MenuItem>
-        </TextField>
-      </Box>
+      <Box mb={4}>
+      <Grid container spacing={2}>
+        
+        <Grid item xs={6} sm={4} md={3}>
+          <TextField
+            select
+            label={"Category.."}
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+            variant="outlined"
+            fullWidth
+          >
+            <MenuItem value="code">Course Code</MenuItem>
+            <MenuItem value="name">Course Name</MenuItem>
+            <MenuItem value="instructor">Instructor</MenuItem>
+          </TextField>
+          </Grid>
+          <Grid item xs={6} sm={8} md={9}>
+          <TextField
+            label="Search"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onClick={(e) => e.stopPropagation()}
+            variant="outlined"
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+    </Box>
+
       {showAlert && (
         <Alert severity="error" sx={{ mb: 4 }}>
           Please select a category before searching.
         </Alert>
       )}
       <Box sx={{ width: "100%" }}>
-        <Tabs
-          value={activeTab}
-          onChange={(event, newValue) => setActiveTab(newValue)}
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="course tabs"
-        >
-          {tabHeaders.map((tabHeader, index) => (
-            <Tab key={index} label={tabHeader} />
-          ))}
-        </Tabs>
+      <Tabs
+        value={activeTab}
+        onChange={(event, newValue) => setActiveTab(newValue)}
+        variant="scrollable"
+        scrollButtons="auto"
+        aria-label="course tabs"
+      >
         {tabHeaders.map((tabHeader, index) => (
-          <TabPanel key={index} value={activeTab} index={index}>
-            <Box
-              sx={{
-                display: "grid",
-                gap: 2,
-                gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-              }}
-            >
-              {groupedCourses[tabHeader].map((course) => (
-                <Card
-                  key={course._id}
-                  sx={{
-                    cursor: "pointer",
-                    transition: "box-shadow 0.3s",
-                    "&:hover": { boxShadow: 6 },
-                  }}
-                  onClick={() => handleCardClick(course._id)}
-                >
-                  <CardContent>
-                    <Typography
-                      variant="h5"
-                      component="div"
-                      color="error.main"
-                      gutterBottom
-                      sx={{ fontWeight: "medium" }}
-                    >
-                      {course.code}
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
-                      component="div"
-                      gutterBottom
-                    >
-                      {course.name}
-                    </Typography>
-                    <Typography variant="body2">
-                      {course.instructor
-                        .map((instructor) => instructor.name)
-                        .join(", ")}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          </TabPanel>
+          <Tab key={index} label={tabHeader} />
         ))}
-      </Box>
+      </Tabs>
+      {tabHeaders.map((tabHeader, index) => (
+        <TabPanel key={index} value={activeTab} index={index}>
+          <Box
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              
+            }}
+          >
+            {groupedCourses[tabHeader].map((course) => (
+              <Card
+                key={course._id}
+                sx={{
+                  cursor: "pointer",
+                  transition: "box-shadow 0.3s",
+                  "&:hover": { boxShadow: 6 },
+                }}
+                onClick={() => handleCardClick(course._id)}
+              >
+                <CardContent>
+                  <Typography
+                    variant="h5"
+                    component="div"
+                    color="error.main"
+                    gutterBottom
+                    sx={{ fontWeight: "medium" }}
+                  >
+                    {course.code}
+                  </Typography>
+                  <Typography variant="subtitle1" component="div" gutterBottom>
+                    {course.name}
+                  </Typography>
+                  <Typography variant="body2">
+                    {course.instructor
+                      .map((instructor) => instructor.name)
+                      .join(", ")}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        </TabPanel>
+      ))}
+    </Box>
     </Box>
   );
 }

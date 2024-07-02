@@ -39,8 +39,7 @@ export default function Course() {
             rating: 0,
             name: instructor.name,
           }))
-        : [],
-      examDifficulty: 0,
+        : [],      
       textReview: "",
       grade: "",
     },
@@ -103,7 +102,7 @@ export default function Course() {
           rating: 0,
           instructorId: "", // Use instructorId instead of _id
         })),
-        examDifficulty: 0,
+        
         textReview: "",
         grade: "",
       });
@@ -177,40 +176,49 @@ export default function Course() {
       ) : (
         <>
           <Box my={4}>
-            <Paper elevation={3} className="p-6">
-              <Box>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="h4" component="h1" gutterBottom>
-                      {courseData.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="h6" color="textSecondary" gutterBottom>
-                      {courseData.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2">{instructorNames}</Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Paper>
-            {reviews.length > 0 && (
-              <BarChart
-                xAxis={[
-                  { scaleType: "band", data: graphData.map((it) => it.x) },
-                ]}
-                series={[{ data: graphData.map((it) => it.y) }]}
-                width={600}
-                height={400}
-              />
-            )}
-          </Box>
+      <Paper elevation={3} className="p-6">
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="h4" component="h1" gutterBottom>
+                {courseData.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6" color="textSecondary" gutterBottom>
+                {courseData.code}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">{instructorNames}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">Avg Rating: {courseData.avgRating}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">Avg Effort for Good Grade: {courseData.avgEffortForGoodGrade}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">Avg Overall Difficulty: {courseData.avgOverallDifficulty}</Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      </Paper>
+      {reviews.length > 0 && (
+        <BarChart
+          xAxis={[
+            { scaleType: 'band', data: graphData.map((it) => it.x) },
+          ]}
+          series={[{ data: graphData.map((it) => it.y) }]}
+          width={600}
+          height={400}
+        />
+      )}
+    </Box>
           <div>
             <Typography variant="h5" component="h2" gutterBottom>
               Reviews
-            </Typography>
+              </Typography>
             {reviews.map((review, index) => (
               <div key={review._id || index} className="mb-4">
                 <Typography variant="body2" gutterBottom>
@@ -222,18 +230,14 @@ export default function Course() {
                 <Typography variant="body2" gutterBottom>
                   {review.author ? review.author.displayName : "Anonymous"}
                 </Typography>
-                {/* <Typography variant="body2" gutterBottom>
+                <Typography variant="body2" gutterBottom>
                   Effort for Good Grade: {review.effortForGoodGrade}
                 </Typography>
                 <Typography variant="body2" gutterBottom>
                   Overall Difficulty: {review.overallDifficulty}
                 </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Instructor Rating: {review.instructorRating}
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Exam Difficulty: {review.examDifficulty}
-                </Typography> */}
+                
+                
                 {user && review.author._id === user._id && (
                   <Button
                     variant="contained"

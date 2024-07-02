@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
 import PropTypes from "prop-types";
+import { deepOrange, deepPurple, green, indigo, pink,amber,blue } from "@mui/material/colors";
 
 // Define a PropTypes shape for the user object
 const userShape = PropTypes.shape({
@@ -52,6 +53,21 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const getAvatarColor = (name) => {
+    const colors = [
+      deepOrange[500],
+      deepPurple[500],
+      indigo[500],
+      green[500],
+      pink[500],
+      amber[500],
+      blue[500]
+    ];
+    const index = name ? name.toUpperCase().charCodeAt(0) % colors.length : 0;
+    return colors[index];
+  };
+
 
   return (
     <AppBar position="static">
@@ -147,7 +163,14 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
             {user ? (
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                <Avatar
+              alt="User Avatar"
+              sx={{ bgcolor: getAvatarColor(user.displayName) }}
+            >
+              {user.displayName ? user.displayName.charAt(0).toUpperCase() : ''}
+            </Avatar>
+
+
                 </IconButton>
               </Tooltip>
             ) : (

@@ -178,38 +178,7 @@ export function ReviewForm({
             ))}
         </Grid>
 
-        <Grid item xs={12}>
-          <Typography id="examDifficulty-slider" gutterBottom>
-            Exam Difficulty
-          </Typography>
-          <Controller
-            name="examDifficulty"
-            control={control}
-            rules={{
-              required: true,
-              min: 1,
-              max: 5,
-            }}
-            render={({ field }) => (
-              <Slider
-                {...field}
-                value={field.value || 0}
-                onChange={(_, newValue) => field.onChange(newValue)}
-                min={0}
-                max={5}
-                step={1}
-                marks
-                valueLabelDisplay="auto"
-                className="mb-2"
-              />
-            )}
-          />
-          {errors.examDifficulty && (
-            <Typography color="error">
-              Exam Difficulty is required and must be between 1 and 5.
-            </Typography>
-          )}
-        </Grid>
+        
         <Grid item xs={12}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Grade</FormLabel>

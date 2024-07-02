@@ -10,6 +10,35 @@ const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
 const { isLoggedIn } = require("../middleware/auth");
 
+async function updateCourseAverages(courseId) {
+  const course = await Course.findById(courseId).populate('reviews');
+  
+  if (!course || !course.reviews.length) {
+    course.avgOverallDifficulty = 0;
+    course.avgEffortForGoodGrade = 0;
+    course.avgRating = 0;
+  } else {
+    const reviewCount = course.reviews.length;
+    let totalOverallDifficulty = 0;
+    let totalEffortForGoodGrade = 0;
+    let totalRating = 0;
+
+    course.reviews.forEach(review => {
+      totalOverallDifficulty += review.overallDifficulty;
+      totalEffortForGoodGrade += review.effortForGoodGrade;
+      totalRating += review.rating;
+    });
+
+    course.avgOverallDifficulty = totalOverallDifficulty / reviewCount;
+    course.avgEffortForGoodGrade = totalEffortForGoodGrade / reviewCount;
+    course.avgRating = totalRating / reviewCount;
+  }
+  console.log(course);
+
+  await course.save();
+}
+
+
 router.post(
   "/",
   isLoggedIn,
@@ -60,7 +89,7 @@ router.post(
         await instructor.save();
       }
     }
-
+    await updateCourseAverages(courseId);
     res.status(201).json(review);
   }),
 );
@@ -115,6 +144,7 @@ router.delete(
 
     // Delete the review
     await Review.findByIdAndDelete(reviewId);
+    await updateCourseAverages(courseId);
 
     res.status(200).json({ message: "Review deleted successfully" });
   }),
