@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import axios from "axios";
-import { Snackbar, SnackbarContent, IconButton } from "@mui/material";
+import { Snackbar, SnackbarContent, IconButton, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import NavBar from "./components/ui/NavBar";
 import Footer from "./components/ui/Footer";
@@ -95,24 +95,36 @@ function App() {
   };
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
       <NavBar
         user={user}
         handleGoogleSignIn={handleGoogleSignIn}
         handleLogout={handleLogout}
       />
 
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route
-          path="/courses"
-          element={
-            <CourseList courses={courses} setCourses={setCourses} user={user} />
-          }
-        />
-        <Route path="/courses/:courseId" element={<Course />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Box component="main" sx={{ flex: 1, mt: 1 }}>
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route
+            path="/courses"
+            element={
+              <CourseList
+                courses={courses}
+                setCourses={setCourses}
+                user={user}
+              />
+            }
+          />
+          <Route path="/courses/:courseId" element={<Course />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Box>
 
       <Footer />
 
@@ -142,7 +154,7 @@ function App() {
           }
         />
       </Snackbar>
-    </div>
+    </Box>
   );
 }
 

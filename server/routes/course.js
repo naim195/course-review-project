@@ -4,7 +4,6 @@ const Courses = require("../models/course");
 const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
 
-
 router.get(
   "/",
   catchAsync(async (req, res) => {

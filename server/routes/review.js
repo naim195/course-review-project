@@ -11,8 +11,8 @@ const ExpressError = require("../utils/ExpressError");
 const { isLoggedIn } = require("../middleware/auth");
 
 async function updateCourseAverages(courseId) {
-  const course = await Course.findById(courseId).populate('reviews');
-  
+  const course = await Course.findById(courseId).populate("reviews");
+
   if (!course || !course.reviews.length) {
     course.avgOverallDifficulty = 0;
     course.avgEffortForGoodGrade = 0;
@@ -23,7 +23,7 @@ async function updateCourseAverages(courseId) {
     let totalEffortForGoodGrade = 0;
     let totalRating = 0;
 
-    course.reviews.forEach(review => {
+    course.reviews.forEach((review) => {
       totalOverallDifficulty += review.overallDifficulty;
       totalEffortForGoodGrade += review.effortForGoodGrade;
       totalRating += review.rating;
@@ -33,11 +33,10 @@ async function updateCourseAverages(courseId) {
     course.avgEffortForGoodGrade = totalEffortForGoodGrade / reviewCount;
     course.avgRating = totalRating / reviewCount;
   }
-  console.log(course);
+  // console.log(course);
 
   await course.save();
 }
-
 
 router.post(
   "/",

@@ -178,7 +178,6 @@ export function ReviewForm({
             ))}
         </Grid>
 
-        
         <Grid item xs={12}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Grade</FormLabel>

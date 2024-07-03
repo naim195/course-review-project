@@ -13,7 +13,15 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
 import PropTypes from "prop-types";
-import { deepOrange, deepPurple, green, indigo, pink,amber,blue } from "@mui/material/colors";
+import {
+  deepOrange,
+  deepPurple,
+  green,
+  indigo,
+  pink,
+  amber,
+  blue,
+} from "@mui/material/colors";
 
 // Define a PropTypes shape for the user object
 const userShape = PropTypes.shape({
@@ -62,12 +70,11 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
       green[500],
       pink[500],
       amber[500],
-      blue[500]
+      blue[500],
     ];
     const index = name ? name.toUpperCase().charCodeAt(0) % colors.length : 0;
     return colors[index];
   };
-
 
   return (
     <AppBar position="static">
@@ -82,14 +89,14 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
+              fontFamily: "'Roboto', sans-serif", // Modern sans-serif font
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".1rem", // Reduced letter spacing
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            COURSE-REVIEW
+            CRS
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -138,16 +145,21 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "monospace",
+              fontFamily: "'Roboto', sans-serif", // Modern sans-serif font
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".1rem", // Reduced letter spacing
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            COURSE-REVIEW
+            CRS
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+
+          {/* Spacer to push navigation items to the right */}
+          <Box sx={{ flexGrow: 1 }} />
+
+          {/* Navigation items moved to the right */}
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -159,18 +171,18 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, ml: 2 }}>
             {user ? (
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-              alt="User Avatar"
-              sx={{ bgcolor: getAvatarColor(user.displayName) }}
-            >
-              {user.displayName ? user.displayName.charAt(0).toUpperCase() : ''}
-            </Avatar>
-
-
+                  <Avatar
+                    alt="User Avatar"
+                    sx={{ bgcolor: getAvatarColor(user.displayName) }}
+                  >
+                    {user.displayName
+                      ? user.displayName.charAt(0).toUpperCase()
+                      : ""}
+                  </Avatar>
                 </IconButton>
               </Tooltip>
             ) : (
