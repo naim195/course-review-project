@@ -22,6 +22,7 @@ import {
   amber,
   blue,
 } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
 
 // Define a PropTypes shape for the user object
 const userShape = PropTypes.shape({
@@ -41,11 +42,12 @@ ResponsiveAppBar.propTypes = {
 };
 
 const pages = ["Courses", "Instructors"];
-const settings = ["Logout"];
+const settings = ["Profile", "Logout"];
 
 function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -58,8 +60,18 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);
+    if (setting === "Profile") {
+      navigate("/user");
+    } else if (setting === "Logout") {
+      handleLogout();
+    }
+  };
+
+  const handleNavigation = (page) => {
+    navigate(`/${page.toLowerCase()}`);
+    handleCloseNavMenu();
   };
 
   const getAvatarColor = (name) => {
@@ -129,7 +141,7 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => handleNavigation(page)}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -140,7 +152,7 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -150,20 +162,21 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
               letterSpacing: ".1rem", // Reduced letter spacing
               color: "inherit",
               textDecoration: "none",
+              textAlign: "center", // Center text on smaller screens
             }}
           >
             CRS
           </Typography>
 
           {/* Spacer to push navigation items to the right */}
-          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} />
 
           {/* Navigation items moved to the right */}
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handleNavigation(page)}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page}
@@ -210,8 +223,7 @@ function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
                 <MenuItem
                   key={setting}
                   onClick={() => {
-                    handleLogout();
-                    handleCloseUserMenu();
+                    handleCloseUserMenu(setting);
                   }}
                 >
                   <Typography textAlign="center">{setting}</Typography>

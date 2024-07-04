@@ -33,7 +33,6 @@ async function updateCourseAverages(courseId) {
     course.avgEffortForGoodGrade = totalEffortForGoodGrade / reviewCount;
     course.avgRating = totalRating / reviewCount;
   }
-  // console.log(course);
 
   await course.save();
 }

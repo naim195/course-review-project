@@ -8,6 +8,7 @@ import Footer from "./components/ui/Footer";
 import CourseList from "./components/CourseList";
 import Course from "./components/Course";
 import Homepage from "./components/Homepage";
+import User from "./components/User";
 import NotFound from "./components/NotFound";
 
 function App() {
@@ -122,6 +123,7 @@ function App() {
             }
           />
           <Route path="/courses/:courseId" element={<Course />} />
+          <Route path="/user" element={<User user={user} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>
