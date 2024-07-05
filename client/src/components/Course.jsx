@@ -9,16 +9,17 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ReviewForm } from "./ReviewForm";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
 
 export default function Course() {
   const { courseId } = useParams();
-  const location = useLocation();
 
-  const user = location.state?.user;
+  const { user } = useContext(AuthContext);
 
   const [courseData, setCourseData] = useState({});
   const [reviews, setReviews] = useState([]);

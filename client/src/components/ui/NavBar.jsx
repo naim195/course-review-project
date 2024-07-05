@@ -12,7 +12,8 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
+
 import {
   deepOrange,
   deepPurple,
@@ -23,28 +24,32 @@ import {
   blue,
 } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../AuthContext";
 
 // Define a PropTypes shape for the user object
-const userShape = PropTypes.shape({
-  _id: PropTypes.string.isRequired,
-  googleId: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  reviews: PropTypes.array.isRequired,
-  __v: PropTypes.number.isRequired,
-});
+// const userShape = PropTypes.shape({
+//   _id: PropTypes.string.isRequired,
+//   googleId: PropTypes.string.isRequired,
+//   displayName: PropTypes.string.isRequired,
+//   email: PropTypes.string.isRequired,
+//   reviews: PropTypes.array.isRequired,
+//   __v: PropTypes.number.isRequired,
+// });
 
 // Then, in your component's propTypes
-ResponsiveAppBar.propTypes = {
-  user: userShape,
-  handleGoogleSignIn: PropTypes.func.isRequired,
-  handleLogout: PropTypes.func.isRequired,
-};
+// ResponsiveAppBar.propTypes = {
+//   user: userShape,
+//   handleGoogleSignIn: PropTypes.func.isRequired,
+//   handleLogout: PropTypes.func.isRequired,
+// };
 
 const pages = ["Courses", "Instructors"];
 const settings = ["Profile", "Logout"];
 
-function ResponsiveAppBar({ user, handleGoogleSignIn, handleLogout }) {
+function ResponsiveAppBar() {
+  const { user, handleGoogleSignIn, handleLogout } = useContext(AuthContext);
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();

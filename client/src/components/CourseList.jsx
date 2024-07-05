@@ -16,25 +16,6 @@ import {
   Grid,
 } from "@mui/material";
 
-CourseList.propTypes = {
-  courses: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      code: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      instructor: PropTypes.arrayOf(
-        PropTypes.shape({
-          _id: PropTypes.string.isRequired,
-          name: PropTypes.string.isRequired,
-        }),
-      ).isRequired,
-      category: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-  setCourses: PropTypes.func.isRequired,
-  user: PropTypes.object,
-};
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -61,8 +42,9 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function CourseList({ courses, setCourses, user }) {
+export default function CourseList() {
   const navigate = useNavigate();
+  const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
   const [loading, setLoading] = useState(true);
@@ -86,7 +68,7 @@ export default function CourseList({ courses, setCourses, user }) {
   }, [fetchCourses]);
 
   const handleCardClick = (id) => {
-    navigate(`/courses/${id}`, { state: { user } });
+    navigate(`/courses/${id}`);
   };
 
   const handleSearchChange = (event) => {

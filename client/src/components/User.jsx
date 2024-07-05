@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
 import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
 
 const userShape = PropTypes.shape({
   _id: PropTypes.string,
@@ -10,7 +12,8 @@ const userShape = PropTypes.shape({
   __v: PropTypes.number.isRequired,
 });
 
-const User = ({ user }) => {
+const User = () => {
+  const { user } = useContext(AuthContext);
   return user ? (
     <Card>
       <CardContent>
