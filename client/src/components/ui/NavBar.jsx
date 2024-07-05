@@ -12,7 +12,6 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import SchoolIcon from "@mui/icons-material/School";
-// import PropTypes from "prop-types";
 
 import {
   deepOrange,
@@ -26,23 +25,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthContext";
-
-// Define a PropTypes shape for the user object
-// const userShape = PropTypes.shape({
-//   _id: PropTypes.string.isRequired,
-//   googleId: PropTypes.string.isRequired,
-//   displayName: PropTypes.string.isRequired,
-//   email: PropTypes.string.isRequired,
-//   reviews: PropTypes.array.isRequired,
-//   __v: PropTypes.number.isRequired,
-// });
-
-// Then, in your component's propTypes
-// ResponsiveAppBar.propTypes = {
-//   user: userShape,
-//   handleGoogleSignIn: PropTypes.func.isRequired,
-//   handleLogout: PropTypes.func.isRequired,
-// };
 
 const pages = ["Courses", "Instructors"];
 const settings = ["Profile", "Logout"];
@@ -106,9 +88,9 @@ function ResponsiveAppBar() {
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "'Roboto', sans-serif", // Modern sans-serif font
+              fontFamily: "'Roboto', sans-serif",
               fontWeight: 700,
-              letterSpacing: ".1rem", // Reduced letter spacing
+              letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -162,12 +144,12 @@ function ResponsiveAppBar() {
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "'Roboto', sans-serif", // Modern sans-serif font
+              fontFamily: "'Roboto', sans-serif",
               fontWeight: 700,
-              letterSpacing: ".1rem", // Reduced letter spacing
+              letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
-              textAlign: "center", // Center text on smaller screens
+              textAlign: "center",
             }}
           >
             CRS

@@ -1,16 +1,6 @@
-import PropTypes from "prop-types";
 import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
-
-const userShape = PropTypes.shape({
-  _id: PropTypes.string,
-  googleId: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  reviews: PropTypes.array.isRequired,
-  __v: PropTypes.number.isRequired,
-});
 
 const User = () => {
   const { user } = useContext(AuthContext);
@@ -48,10 +38,6 @@ const User = () => {
       </CardContent>
     </Card>
   );
-};
-
-User.propTypes = {
-  user: userShape,
 };
 
 export default User;

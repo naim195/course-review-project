@@ -8,22 +8,20 @@ import {
   Rating,
 } from "@mui/material";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ReviewForm } from "./ReviewForm";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
+import { CourseContext } from "../CourseContext";
 
 export default function Course() {
   const { courseId } = useParams();
-
   const { user } = useContext(AuthContext);
+  const { courseData, fetchCourseData, reviews, setReviews, error } =
+    useContext(CourseContext);
 
-  const [courseData, setCourseData] = useState({});
-  const [reviews, setReviews] = useState([]);
-  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
@@ -46,39 +44,15 @@ export default function Course() {
     },
   });
 
-  const fetchCourseData = useCallback(async (courseId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/courses/${courseId}`,
-      );
-      if (response.status === 200) {
-        setCourseData(response.data);
-        setReviews(response.data.reviews || []);
-      } else {
-        console.log("error in if else upper");
-        throw new Error(response.data.error);
-      }
-    } catch (error) {
-      console.log(error);
-      setError(
-        error.response?.data?.error ||
-          "An error occurred while fetching course data",
-      );
-      setCourseData({});
-      setReviews([]);
-    }
-  }, []);
-
   useEffect(() => {
     fetchCourseData(courseId);
   }, [courseId, fetchCourseData]);
 
   const onSubmit = async (data) => {
     try {
-      // Format the instructorRating to include instructorId and rating
       const formattedInstructorRating = courseData.instructor.map(
         (instructor, index) => ({
-          instructorId: instructor._id, // Use instructorId instead of _id
+          instructorId: instructor._id,
           rating: data.instructorRating[index].rating,
         }),
       );
@@ -101,18 +75,13 @@ export default function Course() {
         overallDifficulty: 0,
         instructorRating: courseData.instructor.map(() => ({
           rating: 0,
-          instructorId: "", // Use instructorId instead of _id
+          instructorId: "",
         })),
-
         textReview: "",
         grade: "",
       });
     } catch (error) {
-      console.log(error);
-      setError(
-        error.response?.data?.message ||
-          "An error occurred while submitting the review",
-      );
+      console.error("Error submitting review:", error);
     }
   };
 
@@ -130,9 +99,7 @@ export default function Course() {
 
   const hasUserReviewedBefore = () => {
     if (user) {
-      return reviews.some((review) => {
-        return review.author._id === user._id;
-      });
+      return reviews.some((review) => review.author._id === user._id);
     }
     return false;
   };
@@ -188,6 +155,11 @@ export default function Course() {
                   <Grid item xs={12}>
                     <Typography variant="h6" color="textSecondary" gutterBottom>
                       {courseData.code}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="h6" color="textSecondary" gutterBottom>
+                      {courseData.credits}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>

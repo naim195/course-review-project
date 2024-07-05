@@ -148,6 +148,7 @@ const seedDb = async () => {
           name: courseName,
           code: courseCode,
           category: courseCategory,
+          credits: credits,
           instructor: instructors, // Assign array of instructors
         });
 

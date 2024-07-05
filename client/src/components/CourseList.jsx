@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
@@ -15,6 +14,8 @@ import {
   CardContent,
   Grid,
 } from "@mui/material";
+import { useContext } from "react";
+import { CourseContext } from "../CourseContext";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,24 +45,11 @@ TabPanel.propTypes = {
 
 export default function CourseList() {
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
+  const { courses, fetchCourses, loading } = useContext(CourseContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
-  const [loading, setLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-
-  const fetchCourses = useCallback(async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/courses");
-      const coursesData = response.data;
-      setCourses(coursesData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [setCourses]);
 
   useEffect(() => {
     fetchCourses();

@@ -1,8 +1,5 @@
-// import {  useState } from "react";
 import { Route, Routes } from "react-router-dom";
-// import axios from "axios";
 import { Box } from "@mui/material";
-// import CloseIcon from "@mui/icons-material/Close";
 import NavBar from "./components/ui/NavBar";
 import Footer from "./components/ui/Footer";
 import CourseList from "./components/CourseList";
