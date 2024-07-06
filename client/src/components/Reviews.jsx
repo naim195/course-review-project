@@ -4,9 +4,6 @@ import PropTypes from "prop-types";
 export function Reviews({ reviews, user, handleDelete }) {
   return (
     <Box my={4}>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Reviews
-      </Typography>
       <Grid container spacing={2}>
         {reviews.map((review, index) => (
           <Grid item xs={12} key={review._id || index}>
@@ -76,7 +73,7 @@ Reviews.propTypes = {
       }),
       effortForGoodGrade: PropTypes.string,
       overallDifficulty: PropTypes.string,
-    })
+    }),
   ).isRequired,
   user: PropTypes.shape({
     _id: PropTypes.string,

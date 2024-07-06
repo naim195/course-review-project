@@ -19,7 +19,6 @@ function App() {
           flexDirection: "column",
           minHeight: "100vh",
           padding: 0,
-          
         }}
       >
         <NavBar />

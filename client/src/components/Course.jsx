@@ -102,7 +102,11 @@ export default function Course() {
     courseData && courseData.instructor
       ? courseData.instructor
           .map((instructor) => {
-            return `${instructor.name}${instructor.averageRating ? `(${instructor.averageRating.toFixed(2)})` : ""}`;
+            return `${instructor.name}${
+              instructor.averageRating
+                ? `(${instructor.averageRating.toFixed(2)})`
+                : ""
+            }`;
           })
           .join(", ")
       : "";
@@ -130,7 +134,7 @@ export default function Course() {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ mb: 4 }}>
       {error ? (
         <Typography variant="h6" color="error">
           {error}
@@ -142,12 +146,12 @@ export default function Course() {
             courseData={courseData}
           />
 
-          <Grid container spacing={4}>
+          <Grid container spacing={4} justifyContent="center">
             <Grid item xs={12} md={6}>
               <Typography variant="h4" component="h2" gutterBottom>
                 Course Statistics
               </Typography>
-              {reviews.length > 0 && (
+              {reviews.length > 0 ? (
                 <Box sx={{ height: 400, width: "100%" }}>
                   <BarChart
                     xAxis={[
@@ -157,37 +161,55 @@ export default function Course() {
                     height={400}
                   />
                 </Box>
+              ) : (
+                <Typography variant="body1">No reviews yet.</Typography>
               )}
             </Grid>
 
             <Grid item xs={12} md={6}>
               <Typography variant="h4" component="h2" gutterBottom>
-                Add a Review
+                Reviews
               </Typography>
+              {reviews.length > 0 ? (
+                <Reviews
+                  reviews={reviews}
+                  user={user}
+                  handleDelete={handleDelete}
+                />
+              ) : (
+                <Typography variant="body1">No reviews yet.</Typography>
+              )}
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              md={6}
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+            >
               {!hasUserReviewedBefore() ? (
-                <Paper elevation={3} sx={{ padding: "24px" }}>
-                  <ReviewForm
-                    handleSubmit={handleSubmit}
-                    onSubmit={onSubmit}
-                    control={control}
-                    errors={errors}
-                    register={register}
-                    courseData={courseData}
-                  />
-                </Paper>
+                <>
+                  <Typography variant="h4" component="h2" gutterBottom>
+                    Add a Review
+                  </Typography>
+                  <Paper elevation={3} sx={{ padding: "24px", margin: "auto" }}>
+                    <ReviewForm
+                      handleSubmit={handleSubmit}
+                      onSubmit={onSubmit}
+                      control={control}
+                      errors={errors}
+                      register={register}
+                      courseData={courseData}
+                    />
+                  </Paper>
+                </>
               ) : (
                 <Typography variant="body1">
                   You have already submitted a review for this course.
                 </Typography>
               )}
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <Reviews
-                reviews={reviews}
-                user={user}
-                handleDelete={handleDelete}
-              />
             </Grid>
           </Grid>
         </>
