@@ -10,11 +10,12 @@ export const CourseProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState("");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const fetchCourses = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:3000/courses");
+      const response = await axios.get(`${backendUrl}/courses`);
       const coursesData = response.data;
       setCourses(coursesData);
     } catch (error) {
@@ -27,7 +28,7 @@ export const CourseProvider = ({ children }) => {
   const fetchCourseData = useCallback(async (courseId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/courses/${courseId}`,
+        `${backendUrl}/courses/${courseId}`,
       );
       if (response.status === 200) {
         setCourseData(response.data);

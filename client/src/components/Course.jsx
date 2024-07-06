@@ -15,6 +15,7 @@ export default function Course() {
   const { user } = useContext(AuthContext);
   const { courseData, fetchCourseData, reviews, setReviews, error } =
     useContext(CourseContext);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const {
     register,
@@ -58,7 +59,7 @@ export default function Course() {
       };
 
       const response = await axios.post(
-        `http://localhost:3000/courses/${courseId}/reviews`,
+        `${backendUrl}/courses/${courseId}/reviews`,
         payload,
         { withCredentials: true },
       );
@@ -82,7 +83,7 @@ export default function Course() {
   const handleDelete = async (reviewId) => {
     try {
       await axios.delete(
-        `http://localhost:3000/courses/${courseId}/reviews/${reviewId}`,
+        `${backendUrl}/courses/${courseId}/reviews/${reviewId}`,
         { withCredentials: true },
       );
       setReviews((prev) => prev.filter((review) => review._id !== reviewId));

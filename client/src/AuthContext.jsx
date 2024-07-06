@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     checkAuth();
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/auth/check", {
+      const response = await axios.get(`${backendUrl}/auth/check`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   const handleGoogleSignIn = async () => {
     try {
       const newWindow = window.open(
-        "http://localhost:3000/auth/google",
+        `${backendUrl}/auth/google`,
         "_blank",
         "width=500,height=600",
       );
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/auth/logout", {
+      const response = await axios.get(`${backendUrl}/auth/logout`, {
         withCredentials: true,
       });
 
