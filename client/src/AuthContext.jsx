@@ -39,23 +39,29 @@ export const AuthProvider = ({ children }) => {
         "_blank",
         "width=500,height=600",
       );
-
+  
       const { data } = await new Promise((resolve, reject) => {
         const interval = setInterval(() => {
           if (newWindow.closed) {
             clearInterval(interval);
             reject(new Error("Google sign-in process was canceled"));
           }
-        }, 500);
-
-        window.addEventListener("message", (event) => {
-          if (event.data && event.data.user) {
-            clearInterval(interval);
-            resolve({ data: event.data });
+  
+          try {
+            const currentUrl = newWindow.location.href;
+            if (currentUrl.startsWith('http://localhost:5173/auth-success')) {
+              clearInterval(interval);
+              const urlParams = new URLSearchParams(new URL(currentUrl).search);
+              const userData = JSON.parse(decodeURIComponent(urlParams.get('userData')));
+              resolve({ data: { user: userData } });
+              newWindow.close();
+            }
+          } catch (e) {
+            // Ignore errors caused by cross-origin restrictions
           }
-        });
+        }, 500);
       });
-
+  
       setUser(data.user);
       showSnackbar("Signed in successfully!");
     } catch (error) {
