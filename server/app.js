@@ -36,7 +36,7 @@ app.use(helmet());
 app.use(compression());
 app.use(
   cors({
-    origin: "course-review-project-phi.vercel.app",
+    origin: "https://course-review-project-phi.vercel.app",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   }),
