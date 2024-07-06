@@ -18,14 +18,9 @@ router.get(
     failureFlash: "Something went wrong",
   }),
   (req, res) => {
-    // Send the user data back to the frontend
-    console.log("Signed in successfully!!");
-    res.send(`
-      <script>
-          window.opener.postMessage({ user: ${JSON.stringify(req.user)} }, '*');
-          window.close();
-      </script>
-  `);
+    // Redirect to a success URL with the user data as a query parameter
+    const userDataParam = encodeURIComponent(JSON.stringify(req.user));
+    res.redirect(`https://course-review-project-phi.vercel.app/auth-success?userData=${userDataParam}`);
   },
 );
 
