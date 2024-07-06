@@ -1,4 +1,3 @@
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -23,7 +22,7 @@ import {
   blue,
 } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../AuthContext";
 
 const pages = ["Courses", "Instructors"];
@@ -32,13 +31,14 @@ const settings = ["Profile", "Logout"];
 function ResponsiveAppBar() {
   const { user, handleGoogleSignIn, handleLogout } = useContext(AuthContext);
 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -149,17 +149,11 @@ function ResponsiveAppBar() {
               letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
-              textAlign: "center",
             }}
           >
             CRS
           </Typography>
-
-          {/* Spacer to push navigation items to the right */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} />
-
-          {/* Navigation items moved to the right */}
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -171,13 +165,15 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0, ml: 2 }}>
+          <Box sx={{ flexGrow: 0 }}>
             {user ? (
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
                     alt="User Avatar"
-                    sx={{ bgcolor: getAvatarColor(user.displayName) }}
+                    sx={{
+                      bgcolor: getAvatarColor(user.displayName),
+                    }}
                   >
                     {user.displayName
                       ? user.displayName.charAt(0).toUpperCase()

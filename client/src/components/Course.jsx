@@ -1,20 +1,14 @@
-import {
-  Box,
-  Grid,
-  Paper,
-  Typography,
-  Container,
-  Button,
-  Rating,
-} from "@mui/material";
+import { CourseData } from "./IndividualCourseData";
+import { Reviews } from "./Reviews";
+import { ReviewForm } from "./ReviewForm";
+import { AuthContext } from "../AuthContext";
+import { CourseContext } from "../CourseContext";
+import { Box, Grid, Paper, Typography, Container } from "@mui/material";
 import axios from "axios";
 import { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { ReviewForm } from "./ReviewForm";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { AuthContext } from "../AuthContext";
-import { CourseContext } from "../CourseContext";
 
 export default function Course() {
   const { courseId } = useParams();
@@ -136,116 +130,66 @@ export default function Course() {
   }
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       {error ? (
         <Typography variant="h6" color="error">
           {error}
         </Typography>
       ) : (
         <>
-          <Box my={4}>
-            <Paper elevation={3} className="p-6">
-              <Box>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="h4" component="h1" gutterBottom>
-                      {courseData.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="h6" color="textSecondary" gutterBottom>
-                      {courseData.code}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="h6" color="textSecondary" gutterBottom>
-                      {courseData.credits}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2">{instructorNames}</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2">
-                      Avg Rating: {courseData.avgRating}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2">
-                      Avg Effort for Good Grade:{" "}
-                      {courseData.avgEffortForGoodGrade}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2">
-                      Avg Overall Difficulty: {courseData.avgOverallDifficulty}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Paper>
-            {reviews.length > 0 && (
-              <BarChart
-                xAxis={[
-                  { scaleType: "band", data: graphData.map((it) => it.x) },
-                ]}
-                series={[{ data: graphData.map((it) => it.y) }]}
-                width={600}
-                height={400}
-              />
-            )}
-          </Box>
-          <div>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Reviews
-            </Typography>
-            {reviews.map((review, index) => (
-              <div key={review._id || index} className="mb-4">
-                <Typography variant="body2" gutterBottom>
-                  {review.textReview}
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  <Rating value={review.rating} precision={0.5} readOnly />
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  {review.author ? review.author.displayName : "Anonymous"}
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Effort for Good Grade: {review.effortForGoodGrade}
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Overall Difficulty: {review.overallDifficulty}
-                </Typography>
+          <CourseData
+            instructorNames={instructorNames}
+            courseData={courseData}
+          />
 
-                {user && review.author._id === user._id && (
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleDelete(review._id)}
-                  >
-                    Delete
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-          {!hasUserReviewedBefore() && (
-            <Box my={4}>
-              <Paper elevation={3} className="p-6">
-                <Typography variant="h5" component="h2" gutterBottom>
-                  Add a Review
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                Course Statistics
+              </Typography>
+              {reviews.length > 0 && (
+                <Box sx={{ height: 400, width: "100%" }}>
+                  <BarChart
+                    xAxis={[
+                      { scaleType: "band", data: graphData.map((it) => it.x) },
+                    ]}
+                    series={[{ data: graphData.map((it) => it.y) }]}
+                    height={400}
+                  />
+                </Box>
+              )}
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                Add a Review
+              </Typography>
+              {!hasUserReviewedBefore() ? (
+                <Paper elevation={3} sx={{ padding: "24px" }}>
+                  <ReviewForm
+                    handleSubmit={handleSubmit}
+                    onSubmit={onSubmit}
+                    control={control}
+                    errors={errors}
+                    register={register}
+                    courseData={courseData}
+                  />
+                </Paper>
+              ) : (
+                <Typography variant="body1">
+                  You have already submitted a review for this course.
                 </Typography>
-                <ReviewForm
-                  handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
-                  control={control}
-                  errors={errors}
-                  register={register}
-                  courseData={courseData}
-                />
-              </Paper>
-            </Box>
-          )}
+              )}
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Reviews
+                reviews={reviews}
+                user={user}
+                handleDelete={handleDelete}
+              />
+            </Grid>
+          </Grid>
         </>
       )}
     </Container>
