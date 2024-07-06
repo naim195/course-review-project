@@ -6,6 +6,8 @@ const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const dotenv = require("dotenv");
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
 
 require("./passport");
 const ExpressError = require("./utils/ExpressError");
@@ -15,7 +17,8 @@ const reviews = require("./routes/review");
 const login = require("./routes/login");
 
 const app = express();
-const mongoURL = "mongodb://127.0.0.1:27017/coursereview";
+const mongoURL = process.env.DB_URL;
+
 dotenv.config();
 
 // MongoDB Connection
@@ -29,6 +32,7 @@ mongoose
   });
 
 // Middleware
+app.use(helmet());
 app.use(compression());
 app.use(
   cors({
@@ -38,6 +42,9 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(mongoSanitize({
+  replaceWith: '_'
+}))
 
 app.use(
   session({

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
   Tabs,
@@ -45,6 +45,7 @@ TabPanel.propTypes = {
 
 export default function CourseList() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { courses, fetchCourses, loading } = useContext(CourseContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
@@ -54,6 +55,17 @@ export default function CourseList() {
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const category = searchParams.get('category');
+    const search = searchParams.get('search');
+    if (category && search) {
+      setSearchCategory(category);
+      setSearchTerm(search);
+    }
+  }, [location.search]);
+
 
   const handleCardClick = (id) => {
     navigate(`/courses/${id}`);

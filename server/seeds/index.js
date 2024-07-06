@@ -10,7 +10,10 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-mongoose.connect("mongodb://127.0.0.1:27017/coursereview");
+const dbUrl = process.env.DB_URL;
+
+mongoose.connect(dbUrl);
+// mongoose.connect("mongodb://127.0.0.1:27017/coursereview");
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "conection error"));
