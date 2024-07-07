@@ -37,7 +37,7 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://apis.google.com", "https://accounts.google.com"],
+      scriptSrc: ["'self'", "https://apis.google.com", "https://accounts.google.com","'unsafe-inline'"],
       connectSrc: ["'self'", `${backendUrl}`],
       imgSrc: ["'self'", "data:"],
       styleSrc: ["'self'", "'unsafe-inline'"], 
