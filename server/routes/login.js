@@ -12,7 +12,7 @@ router.get(
 );
 
 router.get(
-  "/auth/google/callback",
+  "/google/callback",
   passport.authenticate("google", {
     failureRedirect: failureLoginUrl,
     failureFlash: "Something went wrong",
