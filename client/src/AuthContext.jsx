@@ -17,6 +17,17 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userDataParam = urlParams.get('userData');
+    if (userDataParam) {
+      const userData = JSON.parse(decodeURIComponent(userDataParam));
+      setUser(userData);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showSnackbar("Signed in successfully!");
+    }
+  }, []);
+
   const checkAuth = async () => {
     try {
       const response = await axios.get(`${backendUrl}/auth/check`, {
@@ -39,30 +50,31 @@ export const AuthProvider = ({ children }) => {
         "_blank",
         "width=500,height=600",
       );
-  
-      const { data } = await new Promise((resolve, reject) => {
+
+      await new Promise((resolve, reject) => {
         const interval = setInterval(() => {
           if (newWindow.closed) {
             clearInterval(interval);
             reject(new Error("Google sign-in process was canceled"));
           }
-  
+
           try {
             const currentUrl = newWindow.location.href;
-            if (currentUrl.startsWith('https://course-review-project-phi.vercel.app/auth-success')) {
+            if (currentUrl.startsWith('https://course-review-project-phi.vercel.app/')) {
               clearInterval(interval);
               const urlParams = new URLSearchParams(new URL(currentUrl).search);
               const userData = JSON.parse(decodeURIComponent(urlParams.get('userData')));
-              resolve({ data: { user: userData } });
+              setUser(userData);
+              resolve();
               newWindow.close();
             }
           } catch (e) {
             // Ignore errors caused by cross-origin restrictions
+            console.error(e);
           }
         }, 500);
       });
-  
-      setUser(data.user);
+
       showSnackbar("Signed in successfully!");
     } catch (error) {
       console.error("Google sign-in failed:", error);

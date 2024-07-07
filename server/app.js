@@ -18,6 +18,7 @@ const login = require("./routes/login");
 
 const app = express();
 const mongoURL = process.env.DB_URL;
+const backendUrl = process.env.BACKEND_URL;
 
 dotenv.config();
 
@@ -32,7 +33,18 @@ mongoose
   });
 
 // Middleware
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://apis.google.com", "https://accounts.google.com"],
+      connectSrc: ["'self'", `${backendUrl}`],
+      imgSrc: ["'self'", "data:"],
+      styleSrc: ["'self'", "'unsafe-inline'"], 
+    },
+  })
+);
+
 app.use(compression());
 app.use(
   cors({
