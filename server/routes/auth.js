@@ -14,12 +14,12 @@ router.post('/google', async (req, res) => {
   console.log('Received Google sign-in request:', { name, email, uid });
 
   try {
-    let user = await User.findOne({ uid });
+    let user = await User.findOne({ googleId });
     if (user) {
       console.log('User found:', user);
     } else {
       console.log('User not found, creating new user');
-      user = new User({ displayName:name, email, uid });
+      user = new User({ displayName:name, email, googleId:uid });
       await user.save();
       console.log('New user created:', user);
     }

@@ -19,7 +19,7 @@ const reviewSchema = yup.object({
 });
 
 const userSchema = yup.object({
-  uid: yup.string().required('UID is required'),
+  googleId: yup.string().required('UID is required'),
   displayName: yup.string().required("Display Name is required"),
   email: yup
     .string()
