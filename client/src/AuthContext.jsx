@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       await axios.get(`${backendUrl}/auth/logout`, {
         withCredentials: true,
       });
-      setUser(null);
+      setUser(null); // Reset user state to null
       console.log("User logged out");
       showSnackbar("Logged out successfully!");
     } catch (error) {
@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
       showSnackbar("An error occurred during logout.");
     }
   };
+  
 
   const showSnackbar = (message) => {
     console.log("Showing snackbar:", message);

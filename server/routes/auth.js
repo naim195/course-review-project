@@ -67,7 +67,11 @@ router.get('/check', async (req, res) => {
 
 router.get('/logout', (req, res) => {
   console.log('Logging out user');
-  res.clearCookie('access_token').json({ message: 'Logged out successfully!' });
+  res.clearCookie('access_token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+  }).json({ message: 'Logged out successfully!' });
 });
 
 module.exports = router;
