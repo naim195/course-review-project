@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  
+  uid: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   displayName: {
     type: String,
     required: true,
@@ -10,7 +14,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: true,  // Keep unique if you still want to store email for other purposes
   },
   reviews: [
     {
@@ -19,6 +23,7 @@ const userSchema = new Schema({
     },
   ],
 });
+
 
 const User = mongoose.model("User", userSchema);
 

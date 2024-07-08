@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
         data: {
           name: resultsFromGoogle.user.displayName,
           email: resultsFromGoogle.user.email,
+          uid: resultsFromGoogle.user.uid,
         },
         withCredentials: true,
       });

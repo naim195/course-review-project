@@ -10,16 +10,16 @@ const secret = process.env.JWT_SECRET;
 router.use(cookieParser());
 
 router.post('/google', async (req, res) => {
-  const { name, email } = req.body;
-  console.log('Received Google sign-in request:', { name, email });
+  const { name, email, uid } = req.body;
+  console.log('Received Google sign-in request:', { name, email, uid });
 
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ uid });
     if (user) {
       console.log('User found:', user);
     } else {
       console.log('User not found, creating new user');
-      user = new User({ displayName:name, email });
+      user = new User({ displayName:name, email, uid });
       await user.save();
       console.log('New user created:', user);
     }
@@ -30,7 +30,7 @@ router.post('/google', async (req, res) => {
     res.status(200).cookie('access_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite:'none',
+      sameSite: 'none',
     }).json({ user });
     console.log('Token sent in cookie:', token);
   } catch (error) {
