@@ -14,7 +14,7 @@ router.post('/google', async (req, res) => {
   console.log('Received Google sign-in request:', { name, email, uid });
 
   try {
-    let user = await User.findOne({ googleId });
+    let user = await User.findOne({ uid });
     if (user) {
       console.log('User found:', user);
     } else {
