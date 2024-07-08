@@ -1,26 +1,24 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 const cors = require("cors");
 const compression = require("compression");
-const passport = require("passport");
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const dotenv = require("dotenv");
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-
-require("./passport");
+const User = require("./models/user");
+const { userSchema } = require("./schemas");
 const ExpressError = require("./utils/ExpressError");
 
 const courses = require("./routes/course");
 const reviews = require("./routes/review");
-const login = require("./routes/login");
+const auth = require("./routes/auth");
 
+dotenv.config();
 const app = express();
 const mongoURL = process.env.DB_URL;
 const backendUrl = process.env.BACKEND_URL;
-
-dotenv.config();
 
 // MongoDB Connection
 mongoose
@@ -33,55 +31,25 @@ mongoose
   });
 
 // Middleware
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://apis.google.com", "https://accounts.google.com","'unsafe-inline'"],
-      connectSrc: ["'self'", `${backendUrl}`],
-      imgSrc: ["'self'", "data:"],
-      styleSrc: ["'self'", "'unsafe-inline'"], 
-    },
-  })
-);
-
+app.use(helmet());
 app.use(compression());
 app.use(
   cors({
-    origin: "https://course-review-project-phi.vercel.app",
+    origin: "https://course-review-project-phi.vercel.app", // Your frontend URL
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-  }),
+  })
 );
 app.use(express.json());
 app.use(mongoSanitize({
   replaceWith: '_'
-}))
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: mongoURL,
-      collectionName: "sessions",
-    }),
-    cookie: {
-      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-      maxAge: 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    },
-  }),
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
+}));
+app.use(cookieParser()); // Add cookie-parser middleware here
 
 // Routes
 app.use("/courses", courses);
 app.use("/courses/:courseId/reviews", reviews);
-app.use(login);
+app.use("/auth", auth);
 
 app.get("/", (req, res) => {
   res.send("Backend says hi!!");

@@ -1,8 +1,10 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { IconButton, Snackbar, SnackbarContent } from "@mui/material";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
+import { app } from "./firebase";
 
 export const AuthContext = createContext();
 
@@ -12,78 +14,78 @@ export const AuthProvider = ({ children }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const auth = getAuth(app);
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const response = await axios.get(`${backendUrl}/auth/check`, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        setUser(response.data.user);
+    const checkAuth = async () => {
+      try {
+        console.log("Checking authentication...");
+        const res = await axios.get(`${backendUrl}/auth/check`, {
+          withCredentials: true,
+        });
+        setUser(res.data.user);
+        console.log("User authenticated:", res.data.user);
+      } catch (error) {
+        console.error("Auth check error", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Auth check failed", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    checkAuth();
+  }, [backendUrl]);
 
   const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     try {
-      const newWindow = window.open(
-        `${backendUrl}/auth/google`,
-        "_blank",
-        "width=500,height=600",
-      );
-      const { data } = await new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          if (newWindow.closed) {
-            clearInterval(interval);
-            reject(new Error("Google sign-in process was canceled"));
-          }
-        }, 500);
-        window.addEventListener("message", (event) => {
-          console.log(event.origin);
-          if (event.origin === backendUrl && event.data && event.data.user) {
-            clearInterval(interval);
-            resolve({ data: event.data });
-          }
-        });
+      console.log("Initiating Google sign-in...");
+      const resultsFromGoogle = await signInWithPopup(auth, provider);
+      console.log("Google sign-in result:", resultsFromGoogle);
+      const res = await axios({
+        method: 'POST',
+        url: `${backendUrl}/auth/google`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          name: resultsFromGoogle.user.displayName,
+          email: resultsFromGoogle.user.email,
+        },
+        withCredentials: true,
       });
+      const data = res.data;
       setUser(data.user);
-      showSnackbar("Signed in successfully!");
+      console.log("User signed in:", data.user);
+      showSnackbar('Sign in success.');
     } catch (error) {
-      console.error("Google sign-in failed:", error);
+      console.error("Sign-in error", error);
+      showSnackbar("Sign-in failed. Please try again.");
     }
   };
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/auth/logout`, {
+      console.log("Logging out...");
+      await axios.get(`${backendUrl}/auth/logout`, {
         withCredentials: true,
       });
-      if (response.status === 200) {
-        setUser(null);
-        showSnackbar("Logged out successfully!");
-      } else {
-        showSnackbar("Logout failed!");
-      }
+      setUser(null);
+      console.log("User logged out");
+      showSnackbar("Logged out successfully!");
     } catch (error) {
+      console.error("Logout error", error);
       showSnackbar("An error occurred during logout.");
-      console.error("An error occurred during logout:", error);
     }
   };
 
   const showSnackbar = (message) => {
+    console.log("Showing snackbar:", message);
     setSnackbarMessage(message);
     setSnackbarOpen(true);
   };
 
   const handleCloseSnackbar = () => {
+    console.log("Closing snackbar");
     setSnackbarOpen(false);
     setSnackbarMessage("");
   };

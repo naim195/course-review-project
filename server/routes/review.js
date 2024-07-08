@@ -8,7 +8,7 @@ const { reviewSchema } = require("../schemas");
 const validate = require("../middleware/validate");
 const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
-const { isLoggedIn } = require("../middleware/auth");
+const { isLoggedIn } = require("../middleware/checkAuth");
 
 async function updateCourseAverages(courseId) {
   const course = await Course.findById(courseId).populate("reviews");
