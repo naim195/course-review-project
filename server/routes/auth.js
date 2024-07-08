@@ -19,7 +19,7 @@ router.post('/google', async (req, res) => {
       console.log('User found:', user);
     } else {
       console.log('User not found, creating new user');
-      user = new User({ name, email });
+      user = new User({ displayName:name, email });
       await user.save();
       console.log('New user created:', user);
     }
