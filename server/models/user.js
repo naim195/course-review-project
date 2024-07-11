@@ -14,7 +14,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,  // Keep unique if you still want to store email for other purposes
+    unique: true,
   },
   reviews: [
     {

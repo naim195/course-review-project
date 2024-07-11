@@ -3,6 +3,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import PropTypes from 'prop-types';
 
 export function CourseStatistics({ reviews }) {
+  // Initialize grade frequency map
   let gradeFreqMap = {
     A: 0,
     "A-": 0,
@@ -14,11 +15,15 @@ export function CourseStatistics({ reviews }) {
     E: 0,
   };
 
+  // Populate the frequency map with review data
   reviews.forEach(review => {
     const grade = review.grade;
-    gradeFreqMap[grade]++;
+    if (grade in gradeFreqMap) {
+      gradeFreqMap[grade]++;
+    }
   });
 
+  // Generate data for the chart
   const graphData = Object.entries(gradeFreqMap).map(([grade, freq]) => ({
     x: grade,
     y: freq,
@@ -47,5 +52,7 @@ export function CourseStatistics({ reviews }) {
 }
 
 CourseStatistics.propTypes = {
-  reviews: PropTypes.arrayOf(PropTypes.object)
+  reviews: PropTypes.arrayOf(PropTypes.shape({
+    grade: PropTypes.string.isRequired,
+  })).isRequired,
 }
