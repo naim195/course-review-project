@@ -3,9 +3,9 @@ import { Reviews } from "./Reviews";
 import { ReviewForm } from "./ReviewForm";
 import { AuthContext } from "../AuthContext";
 import { CourseContext } from "../CourseContext";
-import { Box, Grid, Paper, Typography, Container } from "@mui/material";
+import { Box, Grid, Paper, Typography, Container, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -15,7 +15,9 @@ export default function Course() {
   const { user } = useContext(AuthContext);
   const { courseData, fetchCourseData, reviews, setReviews, error } =
     useContext(CourseContext);
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const {
     register,
@@ -44,12 +46,17 @@ export default function Course() {
   }, [courseId, fetchCourseData]);
 
   const onSubmit = async (data) => {
+    if (!user) {
+      setSnackbarOpen(true);
+      return;
+    }
+
     try {
       const formattedInstructorRating = courseData.instructor.map(
         (instructor, index) => ({
           instructorId: instructor._id,
           rating: data.instructorRating[index].rating,
-        }),
+        })
       );
 
       const payload = {
@@ -61,7 +68,7 @@ export default function Course() {
       const response = await axios.post(
         `${backendUrl}/courses/${courseId}/reviews`,
         payload,
-        { withCredentials: true },
+        { withCredentials: true }
       );
       setReviews((prev) => [...prev, response.data]);
       reset({
@@ -84,7 +91,7 @@ export default function Course() {
     try {
       await axios.delete(
         `${backendUrl}/courses/${courseId}/reviews/${reviewId}`,
-        { withCredentials: true },
+        { withCredentials: true }
       );
       setReviews((prev) => prev.filter((review) => review._id !== reviewId));
     } catch (error) {
@@ -215,6 +222,16 @@ export default function Course() {
           </Grid>
         </>
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="warning" sx={{ width: '100%' }}>
+          Please sign in to submit a review.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

@@ -72,6 +72,7 @@ router.get('/logout', (req, res) => {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'none',
   }).json({ message: 'Logged out successfully!' });
+  console.log(res.cookie);
 });
 
 module.exports = router;
