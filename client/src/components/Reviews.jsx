@@ -1,11 +1,24 @@
-import { Box, Typography, Grid, Paper, Rating, Button } from "@mui/material";
+import { useState } from "react";
+import { Box, Typography, Grid, Paper, Rating, Button, Pagination } from "@mui/material";
 import PropTypes from "prop-types";
 
 export function Reviews({ reviews, user, handleDelete }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 5;
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Calculate the reviews to display on the current page
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+
   return (
     <Box my={4}>
       <Grid container spacing={2}>
-        {reviews.map((review, index) => (
+        {currentReviews.map((review, index) => (
           <Grid item xs={12} key={review._id || index}>
             <Paper
               elevation={3}
@@ -57,6 +70,14 @@ export function Reviews({ reviews, user, handleDelete }) {
           </Grid>
         ))}
       </Grid>
+      <Box display="flex" justifyContent="center" mt={4}>
+        <Pagination
+          count={Math.ceil(reviews.length / reviewsPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </Box>
     </Box>
   );
 }
