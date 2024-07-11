@@ -1,47 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-import {
-  Tabs,
-  Tab,
-  Box,
-  Typography,
-  TextField,
-  MenuItem,
-  CircularProgress,
-  Alert,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
-import { useContext } from "react";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { CourseContext } from "../CourseContext";
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography component="div">{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
+import SearchBar from "./SearchBar";
+import TabsComponent from "./TabsComponent";
 
 export default function CourseList() {
   const navigate = useNavigate();
@@ -58,14 +20,13 @@ export default function CourseList() {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const category = searchParams.get('category');
-    const search = searchParams.get('search');
+    const category = searchParams.get("category");
+    const search = searchParams.get("search");
     if (category && search) {
       setSearchCategory(category);
       setSearchTerm(search);
     }
   }, [location.search]);
-
 
   const handleCardClick = (id) => {
     navigate(`/courses/${id}`);
@@ -90,7 +51,7 @@ export default function CourseList() {
           return course.code.toLowerCase().includes(searchTerm.toLowerCase());
         else if (searchCategory === "instructor")
           return course.instructor.some((instructor) =>
-            instructor.name.toLowerCase().includes(searchTerm.toLowerCase()),
+            instructor.name.toLowerCase().includes(searchTerm.toLowerCase())
           );
         return true;
       })
@@ -127,100 +88,20 @@ export default function CourseList() {
       <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
         All Courses
       </Typography>
-      <Box mb={4}>
-        <Grid container spacing={2}>
-          <Grid item xs={6} sm={4} md={3}>
-            <TextField
-              select
-              label={"Category.."}
-              value={searchCategory}
-              onChange={(e) => setSearchCategory(e.target.value)}
-              variant="outlined"
-              fullWidth
-            >
-              <MenuItem value="code">Course Code</MenuItem>
-              <MenuItem value="name">Course Name</MenuItem>
-              <MenuItem value="instructor">Instructor</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs={6} sm={8} md={9}>
-            <TextField
-              label="Search"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              onClick={(e) => e.stopPropagation()}
-              variant="outlined"
-              fullWidth
-            />
-          </Grid>
-        </Grid>
-      </Box>
-
-      {showAlert && (
-        <Alert severity="error" sx={{ mb: 4 }}>
-          Please select a category before searching.
-        </Alert>
-      )}
-      <Box sx={{ width: "100%" }}>
-        <Tabs
-          value={activeTab}
-          onChange={(event, newValue) => setActiveTab(newValue)}
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="course tabs"
-        >
-          {tabHeaders.map((tabHeader, index) => (
-            <Tab key={index} label={tabHeader} />
-          ))}
-        </Tabs>
-        {tabHeaders.map((tabHeader, index) => (
-          <TabPanel key={index} value={activeTab} index={index}>
-            <Box
-              sx={{
-                display: "grid",
-                gap: 2,
-                gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-              }}
-            >
-              {groupedCourses[tabHeader].map((course) => (
-                <Card
-                  key={course._id}
-                  sx={{
-                    cursor: "pointer",
-                    transition: "box-shadow 0.3s",
-                    "&:hover": { boxShadow: 6 },
-                  }}
-                  onClick={() => handleCardClick(course._id)}
-                >
-                  <CardContent>
-                    <Typography
-                      variant="h5"
-                      component="div"
-                      color="error.main"
-                      gutterBottom
-                      sx={{ fontWeight: "medium" }}
-                    >
-                      {course.code}
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
-                      component="div"
-                      gutterBottom
-                    >
-                      {course.name}
-                    </Typography>
-                    <Typography variant="body2">
-                      {course.instructor
-                        .map((instructor) => instructor.name)
-                        .join(", ")}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          </TabPanel>
-        ))}
-      </Box>
+      <SearchBar
+        searchCategory={searchCategory}
+        setSearchCategory={setSearchCategory}
+        searchTerm={searchTerm}
+        handleSearchChange={handleSearchChange}
+        showAlert={showAlert}
+      />
+      <TabsComponent
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        tabHeaders={tabHeaders}
+        groupedCourses={groupedCourses}
+        handleCardClick={handleCardClick}
+      />
     </Box>
   );
 }
