@@ -81,7 +81,7 @@ const Instructor = () => {
           </Grid>
         ))}
       </Grid>
-      <Box mt={3} display="flex" justifyContent="center">
+      <Box mt={3} mb={3} display="flex" justifyContent="center">
         <Pagination
           count={totalPages}
           page={page}
