@@ -7,6 +7,7 @@ import CourseList from "./components/CourseList";
 import Course from "./components/Course";
 import Homepage from "./components/Homepage";
 import User from "./components/User";
+import Instructor from './components/Instructor'
 import NotFound from "./components/NotFound";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/" element={<Homepage />} />
             <Route path="/courses" element={<CourseList />} />
             <Route path="/courses/:courseId" element={<Course />} />
+            <Route path="/instructors" element={<Instructor/> }/>
             <Route path="/user" element={<User />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

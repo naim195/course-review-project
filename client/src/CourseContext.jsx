@@ -23,7 +23,7 @@ export const CourseProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [setCourses]);
+  }, [setCourses,backendUrl]);
 
   const fetchCourseData = useCallback(async (courseId) => {
     try {
@@ -45,7 +45,7 @@ export const CourseProvider = ({ children }) => {
       setCourseData({});
       setReviews([]);
     }
-  }, []);
+  }, [backendUrl]);
 
   return (
     <CourseContext.Provider

@@ -13,6 +13,7 @@ const ExpressError = require("./utils/ExpressError");
 
 const courses = require("./routes/course");
 const reviews = require("./routes/review");
+const instructors = require('./routes/instructor');
 const auth = require("./routes/auth");
 
 dotenv.config();
@@ -49,6 +50,7 @@ app.use(cookieParser()); // Add cookie-parser middleware here
 // Routes
 app.use("/courses", courses);
 app.use("/courses/:courseId/reviews", reviews);
+app.use('/instructors',instructors)
 app.use("/auth", auth);
 
 app.get("/", (req, res) => {
