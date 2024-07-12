@@ -12,7 +12,11 @@ function CourseGrid({ courses, handleCardClick }) {
       }}
     >
       {courses.map((course) => (
-        <CourseCard key={course._id} course={course} handleCardClick={handleCardClick} />
+        <CourseCard
+          key={course._id}
+          course={course}
+          handleCardClick={handleCardClick}
+        />
       ))}
     </Box>
   );

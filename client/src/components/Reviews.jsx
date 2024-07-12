@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Box, Typography, Grid, Paper, Rating, Button, Pagination } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Rating,
+  Button,
+  Pagination,
+} from "@mui/material";
 import PropTypes from "prop-types";
 
 export function Reviews({ reviews, user, handleDelete }) {

@@ -23,29 +23,30 @@ export const CourseProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [setCourses,backendUrl]);
+  }, [setCourses, backendUrl]);
 
-  const fetchCourseData = useCallback(async (courseId) => {
-    try {
-      const response = await axios.get(
-        `${backendUrl}/courses/${courseId}`,
-      );
-      if (response.status === 200) {
-        setCourseData(response.data);
-        setReviews(response.data.reviews || []);
-      } else {
-        throw new Error(response.data.error);
+  const fetchCourseData = useCallback(
+    async (courseId) => {
+      try {
+        const response = await axios.get(`${backendUrl}/courses/${courseId}`);
+        if (response.status === 200) {
+          setCourseData(response.data);
+          setReviews(response.data.reviews || []);
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+        setError(
+          error.response?.data?.error ||
+            "An error occurred while fetching course data",
+        );
+        setCourseData({});
+        setReviews([]);
       }
-    } catch (error) {
-      console.error("Error fetching course data:", error);
-      setError(
-        error.response?.data?.error ||
-          "An error occurred while fetching course data",
-      );
-      setCourseData({});
-      setReviews([]);
-    }
-  }, [backendUrl]);
+    },
+    [backendUrl],
+  );
 
   return (
     <CourseContext.Provider

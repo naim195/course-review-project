@@ -1,19 +1,19 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const compression = require("compression");
 const dotenv = require("dotenv");
-const mongoSanitize = require('express-mongo-sanitize');
-const helmet = require('helmet');
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 const User = require("./models/user");
 const { userSchema } = require("./schemas");
 const ExpressError = require("./utils/ExpressError");
 
 const courses = require("./routes/course");
 const reviews = require("./routes/review");
-const instructors = require('./routes/instructor');
+const instructors = require("./routes/instructor");
 const auth = require("./routes/auth");
 
 dotenv.config();
@@ -39,18 +39,20 @@ app.use(
     origin: "https://course-review-project-phi.vercel.app", // Your frontend URL
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
-app.use(mongoSanitize({
-  replaceWith: '_'
-}));
+app.use(
+  mongoSanitize({
+    replaceWith: "_",
+  }),
+);
 app.use(cookieParser()); // Add cookie-parser middleware here
 
 // Routes
 app.use("/courses", courses);
 app.use("/courses/:courseId/reviews", reviews);
-app.use('/instructors',instructors)
+app.use("/instructors", instructors);
 app.use("/auth", auth);
 
 app.get("/", (req, res) => {

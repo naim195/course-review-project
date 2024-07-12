@@ -36,16 +36,16 @@ export const AuthProvider = ({ children }) => {
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
+    provider.setCustomParameters({ prompt: "select_account" });
     try {
       console.log("Initiating Google sign-in...");
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       console.log("Google sign-in result:", resultsFromGoogle);
       const res = await axios({
-        method: 'POST',
+        method: "POST",
         url: `${backendUrl}/auth/google`,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         data: {
           name: resultsFromGoogle.user.displayName,
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       const data = res.data;
       setUser(data.user);
       console.log("User signed in:", data.user);
-      showSnackbar('Sign in success.');
+      showSnackbar("Sign in success.");
     } catch (error) {
       console.error("Sign-in error", error);
       showSnackbar("Sign-in failed. Please try again.");
@@ -78,7 +78,6 @@ export const AuthProvider = ({ children }) => {
       showSnackbar("An error occurred during logout.");
     }
   };
-  
 
   const showSnackbar = (message) => {
     console.log("Showing snackbar:", message);

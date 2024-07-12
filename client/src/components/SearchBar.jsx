@@ -1,7 +1,13 @@
 import { Grid, TextField, MenuItem, Alert, Box } from "@mui/material";
 import PropTypes from "prop-types";
 
-function SearchBar({ searchCategory, setSearchCategory, searchTerm, handleSearchChange, showAlert }) {
+function SearchBar({
+  searchCategory,
+  setSearchCategory,
+  searchTerm,
+  handleSearchChange,
+  showAlert,
+}) {
   return (
     <Box mb={4}>
       <Grid container spacing={2}>

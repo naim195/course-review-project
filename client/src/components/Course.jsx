@@ -10,7 +10,8 @@ import { useParams } from "react-router-dom";
 export default function Course() {
   const { courseId } = useParams();
   const { user } = useContext(AuthContext);
-  const { courseData, fetchCourseData, reviews, error } = useContext(CourseContext);
+  const { courseData, fetchCourseData, reviews, error } =
+    useContext(CourseContext);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
@@ -21,9 +22,13 @@ export default function Course() {
     setSnackbarOpen(false);
   };
 
-  const instructorNames = courseData?.instructor
-    ?.map(instructor => `${instructor.name}${instructor.averageRating ? `(${instructor.averageRating.toFixed(2)})` : ""}`)
-    .join(", ") || "";
+  const instructorNames =
+    courseData?.instructor
+      ?.map(
+        (instructor) =>
+          `${instructor.name}${instructor.averageRating ? `(${instructor.averageRating.toFixed(2)})` : ""}`,
+      )
+      .join(", ") || "";
 
   return (
     <Container maxWidth="lg" sx={{ mb: 4 }}>
@@ -33,7 +38,10 @@ export default function Course() {
         </Typography>
       ) : (
         <>
-          <CourseData instructorNames={instructorNames} courseData={courseData} />
+          <CourseData
+            instructorNames={instructorNames}
+            courseData={courseData}
+          />
           <CourseStatistics reviews={reviews} />
           <ReviewsSection
             user={user}
@@ -48,9 +56,13 @@ export default function Course() {
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="warning" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="warning"
+          sx={{ width: "100%" }}
+        >
           Please sign in to submit a review.
         </Alert>
       </Snackbar>

@@ -5,9 +5,15 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useContext } from "react";
 import { CourseContext } from "../CourseContext";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-export function ReviewsSection({ user, courseId, courseData, reviews, setSnackbarOpen }) {
+export function ReviewsSection({
+  user,
+  courseId,
+  courseData,
+  reviews,
+  setSnackbarOpen,
+}) {
   const { setReviews } = useContext(CourseContext);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -23,7 +29,7 @@ export function ReviewsSection({ user, courseId, courseData, reviews, setSnackba
       effortForGoodGrade: 0,
       overallDifficulty: 0,
       instructorRating: courseData.instructor
-        ? courseData.instructor.map(instructor => ({
+        ? courseData.instructor.map((instructor) => ({
             rating: 0,
             name: instructor.name,
           }))
@@ -44,7 +50,7 @@ export function ReviewsSection({ user, courseId, courseData, reviews, setSnackba
         (instructor, index) => ({
           instructorId: instructor._id,
           rating: data.instructorRating[index].rating,
-        })
+        }),
       );
 
       const payload = {
@@ -56,7 +62,7 @@ export function ReviewsSection({ user, courseId, courseData, reviews, setSnackba
       const response = await axios.post(
         `${backendUrl}/courses/${courseId}/reviews`,
         payload,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setReviews((prev) => [...prev, response.data]);
       reset({
@@ -79,7 +85,7 @@ export function ReviewsSection({ user, courseId, courseData, reviews, setSnackba
     try {
       await axios.delete(
         `${backendUrl}/courses/${courseId}/reviews/${reviewId}`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setReviews((prev) => prev.filter((review) => review._id !== reviewId));
     } catch (error) {
@@ -101,11 +107,7 @@ export function ReviewsSection({ user, courseId, courseData, reviews, setSnackba
           Reviews
         </Typography>
         {reviews.length > 0 ? (
-          <Reviews
-            reviews={reviews}
-            user={user}
-            handleDelete={handleDelete}
-          />
+          <Reviews reviews={reviews} user={user} handleDelete={handleDelete} />
         ) : (
           <Typography variant="body1">No reviews yet.</Typography>
         )}
@@ -146,10 +148,9 @@ export function ReviewsSection({ user, courseId, courseData, reviews, setSnackba
 }
 
 ReviewsSection.propTypes = {
-    user: PropTypes.object,
-    courseId: PropTypes.string.isRequired,
-    courseData: PropTypes.object.isRequired,
-    reviews: PropTypes.arrayOf(PropTypes.object),
-    setSnackbarOpen: PropTypes.func.isRequired,
-  };
-  
+  user: PropTypes.object,
+  courseId: PropTypes.string.isRequired,
+  courseData: PropTypes.object.isRequired,
+  reviews: PropTypes.arrayOf(PropTypes.object),
+  setSnackbarOpen: PropTypes.func.isRequired,
+};

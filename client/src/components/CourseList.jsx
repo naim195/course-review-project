@@ -51,7 +51,7 @@ export default function CourseList() {
           return course.code.toLowerCase().includes(searchTerm.toLowerCase());
         else if (searchCategory === "instructor")
           return course.instructor.some((instructor) =>
-            instructor.name.toLowerCase().includes(searchTerm.toLowerCase())
+            instructor.name.toLowerCase().includes(searchTerm.toLowerCase()),
           );
         return true;
       })

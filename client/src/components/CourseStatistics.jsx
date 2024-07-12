@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export function CourseStatistics({ reviews }) {
   // Initialize grade frequency map
@@ -16,7 +16,7 @@ export function CourseStatistics({ reviews }) {
   };
 
   // Populate the frequency map with review data
-  reviews.forEach(review => {
+  reviews.forEach((review) => {
     const grade = review.grade;
     if (grade in gradeFreqMap) {
       gradeFreqMap[grade]++;
@@ -37,10 +37,8 @@ export function CourseStatistics({ reviews }) {
       {reviews.length > 0 ? (
         <Box sx={{ height: 400, width: "100%" }}>
           <BarChart
-            xAxis={[
-              { scaleType: "band", data: graphData.map(it => it.x) },
-            ]}
-            series={[{ data: graphData.map(it => it.y) }]}
+            xAxis={[{ scaleType: "band", data: graphData.map((it) => it.x) }]}
+            series={[{ data: graphData.map((it) => it.y) }]}
             height={400}
           />
         </Box>
@@ -52,7 +50,9 @@ export function CourseStatistics({ reviews }) {
 }
 
 CourseStatistics.propTypes = {
-  reviews: PropTypes.arrayOf(PropTypes.shape({
-    grade: PropTypes.string.isRequired,
-  })).isRequired,
-}
+  reviews: PropTypes.arrayOf(
+    PropTypes.shape({
+      grade: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+};

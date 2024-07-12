@@ -3,7 +3,13 @@ import PropTypes from "prop-types";
 import TabPanel from "./TabPanel";
 import CourseGrid from "./CourseGrid";
 
-function TabsComponent({ activeTab, setActiveTab, tabHeaders, groupedCourses, handleCardClick }) {
+function TabsComponent({
+  activeTab,
+  setActiveTab,
+  tabHeaders,
+  groupedCourses,
+  handleCardClick,
+}) {
   return (
     <Box sx={{ width: "100%" }}>
       <Tabs
@@ -19,7 +25,10 @@ function TabsComponent({ activeTab, setActiveTab, tabHeaders, groupedCourses, ha
       </Tabs>
       {tabHeaders.map((tabHeader, index) => (
         <TabPanel key={index} value={activeTab} index={index}>
-          <CourseGrid courses={groupedCourses[tabHeader]} handleCardClick={handleCardClick} />
+          <CourseGrid
+            courses={groupedCourses[tabHeader]}
+            handleCardClick={handleCardClick}
+          />
         </TabPanel>
       ))}
     </Box>

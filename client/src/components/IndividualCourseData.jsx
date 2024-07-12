@@ -27,15 +27,21 @@ export function CourseData({ instructorNames, courseData }) {
               Credits: {courseData.credits}
             </Typography>
             <Typography variant="h6" gutterBottom>
-  Avg Rating: {courseData.avgRating ? courseData.avgRating.toFixed(2) : 'N/A'}
-</Typography>
-<Typography variant="h6" gutterBottom>
-  Avg Effort for Good Grade: {courseData.avgEffortForGoodGrade ? courseData.avgEffortForGoodGrade.toFixed(2) : 'N/A'}
-</Typography>
-<Typography variant="h6" gutterBottom>
-  Avg Overall Difficulty: {courseData.avgOverallDifficulty ? courseData.avgOverallDifficulty.toFixed(2) : 'N/A'}
-</Typography>
-
+              Avg Rating:{" "}
+              {courseData.avgRating ? courseData.avgRating.toFixed(2) : "N/A"}
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              Avg Effort for Good Grade:{" "}
+              {courseData.avgEffortForGoodGrade
+                ? courseData.avgEffortForGoodGrade.toFixed(2)
+                : "N/A"}
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              Avg Overall Difficulty:{" "}
+              {courseData.avgOverallDifficulty
+                ? courseData.avgOverallDifficulty.toFixed(2)
+                : "N/A"}
+            </Typography>
           </Grid>
         </Grid>
       </Paper>

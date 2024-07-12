@@ -6,7 +6,7 @@ const Instructor = require("../models/instructor");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
 const dotenv = require("dotenv");
-const { faker } = require('@faker-js/faker/locale/en_IN');
+const { faker } = require("@faker-js/faker/locale/en_IN");
 
 dotenv.config();
 
@@ -120,9 +120,9 @@ const generateFakeReviews = async () => {
     for (let i = 0; i < numberOfReviews; i++) {
       const user = faker.helpers.arrayElement(users);
 
-      const instructorRatings = course.instructor.map(instructor => ({
+      const instructorRatings = course.instructor.map((instructor) => ({
         instructorId: instructor._id,
-        rating: faker.number.int({ min: 1, max: 5 })
+        rating: faker.number.int({ min: 1, max: 5 }),
       }));
 
       const review = new Review({
@@ -130,9 +130,18 @@ const generateFakeReviews = async () => {
         effortForGoodGrade: faker.number.int({ min: 1, max: 5 }),
         overallDifficulty: faker.number.int({ min: 1, max: 5 }),
         instructorRating: instructorRatings,
-        grade: faker.helpers.arrayElement(['A', "A-", 'B', "B-", 'C', "C-", "D", "E"]),
+        grade: faker.helpers.arrayElement([
+          "A",
+          "A-",
+          "B",
+          "B-",
+          "C",
+          "C-",
+          "D",
+          "E",
+        ]),
         textReview: faker.lorem.sentence(), // Generate a sentence instead of a paragraph
-        author: user._id
+        author: user._id,
       });
 
       await review.save();
@@ -145,16 +154,25 @@ const generateFakeReviews = async () => {
 
       // Update instructor ratings
       for (const instructorRating of instructorRatings) {
-        const instructor = await Instructor.findById(instructorRating.instructorId);
+        const instructor = await Instructor.findById(
+          instructorRating.instructorId,
+        );
         instructor.ratings.push(review._id);
 
         // Recalculate the average rating
-        const instructorReviews = await Review.find({ 'instructorRating.instructorId': instructor._id });
+        const instructorReviews = await Review.find({
+          "instructorRating.instructorId": instructor._id,
+        });
         const totalRating = instructorReviews.reduce((sum, review) => {
-          const rating = review.instructorRating.find(r => r.instructorId.equals(instructor._id)).rating;
+          const rating = review.instructorRating.find((r) =>
+            r.instructorId.equals(instructor._id),
+          ).rating;
           return sum + rating;
         }, 0);
-        instructor.averageRating = instructorReviews.length > 0 ? totalRating / instructorReviews.length : 0;
+        instructor.averageRating =
+          instructorReviews.length > 0
+            ? totalRating / instructorReviews.length
+            : 0;
 
         await instructor.save();
       }
@@ -162,14 +180,22 @@ const generateFakeReviews = async () => {
 
     // Update course averages
     const courseReviews = await Review.find({ _id: { $in: course.reviews } });
-    course.avgOverallDifficulty = courseReviews.reduce((sum, review) => sum + review.overallDifficulty, 0) / courseReviews.length;
-    course.avgEffortForGoodGrade = courseReviews.reduce((sum, review) => sum + review.effortForGoodGrade, 0) / courseReviews.length;
-    course.avgRating = courseReviews.reduce((sum, review) => sum + review.rating, 0) / courseReviews.length;
+    course.avgOverallDifficulty =
+      courseReviews.reduce((sum, review) => sum + review.overallDifficulty, 0) /
+      courseReviews.length;
+    course.avgEffortForGoodGrade =
+      courseReviews.reduce(
+        (sum, review) => sum + review.effortForGoodGrade,
+        0,
+      ) / courseReviews.length;
+    course.avgRating =
+      courseReviews.reduce((sum, review) => sum + review.rating, 0) /
+      courseReviews.length;
 
     await course.save();
   }
 
-  console.log('Fake reviews generated successfully');
+  console.log("Fake reviews generated successfully");
 };
 
 const seedDb = async () => {
