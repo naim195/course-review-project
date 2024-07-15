@@ -15,7 +15,12 @@ export function CourseData({ instructorNames, courseData }) {
       >
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h3" component="h1" gutterBottom fontWeight="bold">
+            <Typography
+              variant="h3"
+              component="h1"
+              gutterBottom
+              fontWeight="bold"
+            >
               {courseData.name}
             </Typography>
             <Typography variant="h5" gutterBottom>
@@ -26,7 +31,7 @@ export function CourseData({ instructorNames, courseData }) {
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
               <Typography variant="h6" sx={{ mr: 2 }}>
                 Average Rating:
               </Typography>
@@ -36,10 +41,12 @@ export function CourseData({ instructorNames, courseData }) {
                 precision={0.1}
               />
               <Typography variant="body1" sx={{ ml: 1 }}>
-                ({courseData.avgRating ? courseData.avgRating.toFixed(2) : "N/A"})
+                (
+                {courseData.avgRating ? courseData.avgRating.toFixed(2) : "N/A"}
+                )
               </Typography>
             </Box>
-            <Divider sx={{ my: 2, backgroundColor: 'primary.light' }} />
+            <Divider sx={{ my: 2, backgroundColor: "primary.light" }} />
             <Typography variant="h6" gutterBottom>
               Credits: {courseData.credits}
             </Typography>
