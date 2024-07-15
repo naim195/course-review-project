@@ -7,31 +7,12 @@ const ExpressError = require("../utils/ExpressError");
 router.get(
   "/",
   catchAsync(async (req, res) => {
-    const { page = 1, limit = 20, category, search } = req.query;
+    const courses = await Courses.find({}).populate(
+      "instructor",
+      "_id name averageRating",
+    );
 
-    const filter = {};
-    if (category) filter.category = category;
-    if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { code: { $regex: search, $options: "i" } },
-        { "instructor.name": { $regex: search, $options: "i" } },
-      ];
-    }
-
-    const courses = await Courses.find(filter)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit))
-      .populate("instructor", "_id name averageRating");
-
-    const total = await Courses.countDocuments(filter);
-
-    res.json({
-      courses,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(total / limit),
-      totalCourses: total,
-    });
+    res.send(courses);
   }),
 );
 
