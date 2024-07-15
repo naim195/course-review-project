@@ -34,18 +34,27 @@ mongoose
 // Middleware
 app.use(helmet());
 app.use(compression());
+
+// CORS setup
 app.use(
   cors({
-    origin: "https://course-review-project-phi.vercel.app", // Your frontend URL
+    origin: (origin, callback) => {
+      if (origin === undefined || origin.match(/\.vercel\.app$/)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-  }),
+  })
 );
+
 app.use(express.json());
 app.use(
   mongoSanitize({
     replaceWith: "_",
-  }),
+  })
 );
 app.use(cookieParser()); // Add cookie-parser middleware here
 
