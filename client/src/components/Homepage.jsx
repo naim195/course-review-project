@@ -230,7 +230,6 @@ const Homepage = () => {
               </Grid>
             ))}
           </Grid>
-          ;
         </Box>
       </Box>
     </Container>

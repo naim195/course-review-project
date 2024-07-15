@@ -40,7 +40,7 @@ function CourseCard({ course, handleCardClick }) {
             <Typography
               variant="h6"
               component="div"
-              color="error.main"
+              color="primary.main"
               gutterBottom
               sx={{ fontWeight: "medium", wordBreak: "break-word" }}
             >
