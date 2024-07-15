@@ -10,10 +10,12 @@ const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
 const { isLoggedIn } = require("../middleware/checkAuth");
 
+// Function to update course averages after adding or removing a review
 async function updateCourseAverages(courseId) {
   const course = await Course.findById(courseId).populate("reviews");
 
   if (!course || !course.reviews.length) {
+    // If no course or reviews, set averages to 0
     course.avgOverallDifficulty = 0;
     course.avgEffortForGoodGrade = 0;
     course.avgRating = 0;
@@ -23,24 +25,28 @@ async function updateCourseAverages(courseId) {
     let totalEffortForGoodGrade = 0;
     let totalRating = 0;
 
+    // Sum up the review metrics
     course.reviews.forEach((review) => {
       totalOverallDifficulty += review.overallDifficulty;
       totalEffortForGoodGrade += review.effortForGoodGrade;
       totalRating += review.rating;
     });
 
+    // Calculate the averages
     course.avgOverallDifficulty = totalOverallDifficulty / reviewCount;
     course.avgEffortForGoodGrade = totalEffortForGoodGrade / reviewCount;
     course.avgRating = totalRating / reviewCount;
   }
 
+  // Save the updated course document
   await course.save();
 }
 
+// POST route to add a new review
 router.post(
   "/",
-  isLoggedIn,
-  validate(reviewSchema),
+  isLoggedIn, // Middleware to check if the user is logged in
+  validate(reviewSchema), // Middleware to validate the review data against the schema
   catchAsync(async (req, res) => {
     const { courseId } = req.params;
     const reviewData = req.body;
@@ -51,24 +57,29 @@ router.post(
     const user = await User.findById(reviewData.user._id);
 
     if (!course) {
+      // If course is not found, throw an error
       throw new ExpressError("Course not found", 404);
     }
 
+    // Create a new review and associate it with the user
     const review = new Review({
       ...reviewData,
       author: reviewData.user._id,
     });
 
+    // Add the review to the course and user
     course.reviews.push(review);
     user.reviews.push(review);
 
+    // Save the review, course, and user
     await review.save();
     await course.save();
     await user.save();
 
+    // Update instructor ratings based on the review
     for (const instructorRating of reviewData.instructorRating) {
       const instructor = await Instructor.findById(
-        instructorRating.instructorId,
+        instructorRating.instructorId
       ); // Use instructorId instead of name
       if (instructor) {
         instructor.ratings.push(review);
@@ -77,9 +88,9 @@ router.post(
           (sum, r) =>
             sum +
             r.instructorRating.find((ir) =>
-              ir.instructorId.equals(instructor._id),
+              ir.instructorId.equals(instructor._id)
             ).rating,
-          0,
+          0
         );
         const averageRating =
           ratings.length > 0 ? totalRatings / ratings.length : 0;
@@ -87,24 +98,31 @@ router.post(
         await instructor.save();
       }
     }
+
+    // Update the course averages
     await updateCourseAverages(courseId);
+
+    // Send the created review as the response
     res.status(201).json(review);
-  }),
+  })
 );
 
+// DELETE route to remove a review
 router.delete(
   "/:reviewId",
-  isLoggedIn,
+  isLoggedIn, // Middleware to check if the user is logged in
   catchAsync(async (req, res) => {
     const { courseId, reviewId } = req.params;
     const course = await Course.findById(courseId);
     const review = await Review.findById(reviewId);
 
     if (!course) {
+      // If course is not found, throw an error
       throw new ExpressError("Course not found", 404);
     }
 
     if (!review) {
+      // If review is not found, throw an error
       throw new ExpressError("Review not found", 404);
     }
 
@@ -117,7 +135,7 @@ router.delete(
     // Remove review from instructors and update average rating
     for (const instructorRating of review.instructorRating) {
       const instructor = await Instructor.findById(
-        instructorRating.instructorId,
+        instructorRating.instructorId
       ); // Use instructorId instead of name
       if (instructor) {
         await Instructor.findByIdAndUpdate(instructor._id, {
@@ -144,8 +162,9 @@ router.delete(
     await Review.findByIdAndDelete(reviewId);
     await updateCourseAverages(courseId);
 
+    // Send success message as the response
     res.status(200).json({ message: "Review deleted successfully" });
-  }),
+  })
 );
 
 module.exports = router;

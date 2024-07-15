@@ -48,7 +48,7 @@ const Instructor = () => {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{my:4}}>
       <Typography variant="h4" gutterBottom align="center">
         Instructors
       </Typography>
@@ -81,7 +81,7 @@ const Instructor = () => {
           </Grid>
         ))}
       </Grid>
-      <Box mt={3} mb={3} display="flex" justifyContent="center">
+      <Box mt={3} display="flex" justifyContent="center">
         <Pagination
           count={totalPages}
           page={page}
