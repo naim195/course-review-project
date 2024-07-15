@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a website for students to review and rate courses at IITGN. It allows users to browse courses, leave reviews, and view aggregated ratings and feedback for each course. The main aim is to help students make better decisions in choosing courses and 
+This project is a website for students to review and rate courses at IITGN. It allows users to browse courses, leave reviews, and view aggregated ratings and feedback for each course. The main aim is to help students make better decisions in choosing courses and assist them in achieving their academic goals.
 
 
 ## Features
