@@ -38,7 +38,6 @@ app.use(compression());
 // CORS setup
 app.use(
   cors({
-<<<<<<< Updated upstream
     origin: (origin, callback) => {
       if (origin === undefined || origin.match(/\.vercel\.app$/)) {
         callback(null, true);
@@ -46,9 +45,6 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-=======
-    origin: "https://course-review-project-phi.vercel.app", // My frontend URL
->>>>>>> Stashed changes
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
@@ -60,7 +56,7 @@ app.use(
     replaceWith: "_",
   })
 );
-app.use(cookieParser()); // Adding cookie-parser middleware here
+app.use(cookieParser()); // Add cookie-parser middleware here
 
 // Routes
 app.use("/courses", courses);
