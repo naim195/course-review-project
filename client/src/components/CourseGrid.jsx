@@ -8,7 +8,12 @@ function CourseGrid({ courses, handleCardClick }) {
       sx={{
         display: "grid",
         gap: 2,
-        gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+        gridTemplateColumns: {
+          xs: "repeat(auto-fill, minmax(280px, 1fr))",
+          sm: "repeat(auto-fill, minmax(300px, 1fr))",
+          md: "repeat(auto-fill, minmax(320px, 1fr))",
+        },
+        justifyContent: "center",
       }}
     >
       {courses.map((course) => (
