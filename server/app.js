@@ -38,13 +38,7 @@ app.use(compression());
 // CORS setup
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (origin === undefined || origin.match(/\.vercel\.app$/)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://course-review-project-phi.vercel.app",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
