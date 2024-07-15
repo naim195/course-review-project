@@ -41,14 +41,14 @@ app.use(
     origin: "https://course-review-project-phi.vercel.app",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
 app.use(
   mongoSanitize({
     replaceWith: "_",
-  })
+  }),
 );
 app.use(cookieParser()); // Add cookie-parser middleware here
 

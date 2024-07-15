@@ -9,7 +9,7 @@ import SortFilterOptions from "./SortFilterOptions";
 export default function CourseList() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -22,9 +22,8 @@ export default function CourseList() {
     sortOrder,
     filters,
     handleSort,
-    handleFilter
+    handleFilter,
   } = useContext(CourseContext);
-
 
   useEffect(() => {
     fetchCourses();
@@ -54,35 +53,49 @@ export default function CourseList() {
     }
   };
 
-
-
   const filteredAndSortedCourses = courses
-  ? courses
-      .filter((course) => {
-        if (searchTerm === "") return true;
-        if (searchCategory === "name")
-          return course.name.toLowerCase().includes(searchTerm.toLowerCase());
-        else if (searchCategory === "code")
-          return course.code.toLowerCase().includes(searchTerm.toLowerCase());
-        else if (searchCategory === "instructor")
-          return course.instructor.some((instructor) =>
-            instructor.name.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        return true;
-      })
-      .filter((course) => {
-        if (filters.credits.length > 0 && !filters.credits.includes(course.credits)) return false;
-        if (filters.avgRating !== null && course.avgRating < filters.avgRating) return false;
-        if (filters.avgOverallDifficulty !== null && course.avgOverallDifficulty > filters.avgOverallDifficulty) return false;
-        if (filters.avgEffortForGoodGrade !== null && course.avgEffortForGoodGrade > filters.avgEffortForGoodGrade) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        if (a[sortBy] < b[sortBy]) return sortOrder === "asc" ? -1 : 1;
-        if (a[sortBy] > b[sortBy]) return sortOrder === "asc" ? 1 : -1;
-        return 0;
-      })
-  : [];
+    ? courses
+        .filter((course) => {
+          if (searchTerm === "") return true;
+          if (searchCategory === "name")
+            return course.name.toLowerCase().includes(searchTerm.toLowerCase());
+          else if (searchCategory === "code")
+            return course.code.toLowerCase().includes(searchTerm.toLowerCase());
+          else if (searchCategory === "instructor")
+            return course.instructor.some((instructor) =>
+              instructor.name.toLowerCase().includes(searchTerm.toLowerCase()),
+            );
+          return true;
+        })
+        .filter((course) => {
+          if (
+            filters.credits.length > 0 &&
+            !filters.credits.includes(course.credits)
+          )
+            return false;
+          if (
+            filters.avgRating !== null &&
+            course.avgRating < filters.avgRating
+          )
+            return false;
+          if (
+            filters.avgOverallDifficulty !== null &&
+            course.avgOverallDifficulty > filters.avgOverallDifficulty
+          )
+            return false;
+          if (
+            filters.avgEffortForGoodGrade !== null &&
+            course.avgEffortForGoodGrade > filters.avgEffortForGoodGrade
+          )
+            return false;
+          return true;
+        })
+        .sort((a, b) => {
+          if (a[sortBy] < b[sortBy]) return sortOrder === "asc" ? -1 : 1;
+          if (a[sortBy] > b[sortBy]) return sortOrder === "asc" ? 1 : -1;
+          return 0;
+        })
+    : [];
 
   const groupedCourses = filteredAndSortedCourses.reduce((acc, course) => {
     const category = course.category;

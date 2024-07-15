@@ -22,9 +22,9 @@ export const CourseProvider = ({ children }) => {
 
   // Load persisted state from localStorage
   useEffect(() => {
-    const savedSortBy = localStorage.getItem('sortBy');
-    const savedSortOrder = localStorage.getItem('sortOrder');
-    const savedFilters = localStorage.getItem('filters');
+    const savedSortBy = localStorage.getItem("sortBy");
+    const savedSortOrder = localStorage.getItem("sortOrder");
+    const savedFilters = localStorage.getItem("filters");
 
     if (savedSortBy) setSortBy(savedSortBy);
     if (savedSortOrder) setSortOrder(savedSortOrder);
@@ -33,9 +33,9 @@ export const CourseProvider = ({ children }) => {
 
   // Save state to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem('sortBy', sortBy);
-    localStorage.setItem('sortOrder', sortOrder);
-    localStorage.setItem('filters', JSON.stringify(filters));
+    localStorage.setItem("sortBy", sortBy);
+    localStorage.setItem("sortOrder", sortOrder);
+    localStorage.setItem("filters", JSON.stringify(filters));
   }, [sortBy, sortOrder, filters]);
 
   const fetchCourses = useCallback(async () => {
@@ -68,30 +68,33 @@ export const CourseProvider = ({ children }) => {
         console.error("Error fetching course data:", error);
         setError(
           error.response?.data?.error ||
-            "An error occurred while fetching course data"
+            "An error occurred while fetching course data",
         );
         setCourseData({});
         setReviews([]);
       }
     },
-    [backendUrl]
+    [backendUrl],
   );
 
-  const handleSort = useCallback((type, value) => {
-    if (type === 'sortBy') {
-      setSortBy(value);
-      if (sortBy === value) {
-        setSortOrder(prevOrder => prevOrder === "asc" ? "desc" : "asc");
-      } else {
-        setSortOrder("asc");
+  const handleSort = useCallback(
+    (type, value) => {
+      if (type === "sortBy") {
+        setSortBy(value);
+        if (sortBy === value) {
+          setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+        } else {
+          setSortOrder("asc");
+        }
+      } else if (type === "sortOrder") {
+        setSortOrder(value);
       }
-    } else if (type === 'sortOrder') {
-      setSortOrder(value);
-    }
-  }, [sortBy]);
+    },
+    [sortBy],
+  );
 
   const handleFilter = useCallback((filterType, value) => {
-    setFilters(prevFilters => ({
+    setFilters((prevFilters) => ({
       ...prevFilters,
       [filterType]: value,
     }));
