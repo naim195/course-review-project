@@ -34,6 +34,7 @@ export function CourseStatistics({ reviews }) {
       <Typography variant="h4" component="h2" gutterBottom>
         Course Statistics
       </Typography>
+      {/* Render BarChart if there are reviews, otherwise show message */}
       {reviews.length > 0 ? (
         <Box sx={{ height: 400, width: "100%" }}>
           <BarChart

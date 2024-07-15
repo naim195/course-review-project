@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 
+// component for displaying a course card
 function CourseCard({ course, handleCardClick }) {
   return (
     <Card

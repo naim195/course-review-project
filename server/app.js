@@ -58,14 +58,17 @@ app.use("/courses/:courseId/reviews", reviews);
 app.use("/instructors", instructors);
 app.use("/auth", auth);
 
+//root route
 app.get("/", (req, res) => {
   res.send("Backend says hi!!");
 });
 
+//for unmatched routes
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
 
+//error handler
 app.use((err, req, res, next) => {
   console.log(err);
   const { statusCode = 500 } = err;

@@ -1,6 +1,7 @@
 import { Grid, TextField, MenuItem, Alert, Box } from "@mui/material";
 import PropTypes from "prop-types";
 
+// search with with category selection and search term input
 function SearchBar({
   searchCategory,
   setSearchCategory,

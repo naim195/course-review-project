@@ -1,5 +1,6 @@
 const yup = require("yup");
 
+// Schema for a review object
 const reviewSchema = yup.object({
   rating: yup
     .number()
@@ -13,11 +14,11 @@ const reviewSchema = yup.object({
     .number()
     .required("Overall Difficulty is required")
     .oneOf([1, 2, 3, 4, 5], "Overall Difficulty must be between 1 and 5"),
-
   grade: yup.string().oneOf(["A", "A-", "B", "B-", "C", "C-", "D", "E"]),
   textReview: yup.string(),
 });
 
+// Schema for a user object
 const userSchema = yup.object({
   googleId: yup.string().required("UID is required"),
   displayName: yup.string().required("Display Name is required"),
@@ -30,6 +31,7 @@ const userSchema = yup.object({
     .of(yup.string().matches(/^[0-9a-fA-F]{24}$/, "Invalid review ID")),
 });
 
+// Schema for an instructor object
 const instructorSchema = yup.object({
   name: yup.string().required("Instructor name is required"),
   rating: yup

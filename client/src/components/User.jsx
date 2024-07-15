@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
 const User = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // get user from AuthContext
 
   return (
     <Card sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>

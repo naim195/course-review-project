@@ -33,6 +33,7 @@ export function ReviewForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={2}>
+        {/* Overall Rating */}
         <Grid item xs={12}>
           <Typography id="overallRating-slider" gutterBottom>
             Overall Rating
@@ -65,6 +66,8 @@ export function ReviewForm({
             </Typography>
           )}
         </Grid>
+
+        {/* Effort Required for Good Grade */}
         <Grid item xs={12}>
           <Typography id="effortForGoodGrade-slider" gutterBottom>
             Effort Required for Good Grade
@@ -98,6 +101,8 @@ export function ReviewForm({
             </Typography>
           )}
         </Grid>
+
+        {/* Overall Difficulty */}
         <Grid item xs={12}>
           <Typography id="overallDifficulty-slider" gutterBottom>
             Overall Difficulty
@@ -131,6 +136,7 @@ export function ReviewForm({
           )}
         </Grid>
 
+        {/* Instructor Ratings */}
         <Grid item xs={12}>
           <Typography id="instructorRating-slider" gutterBottom>
             Instructor Rating
@@ -178,6 +184,7 @@ export function ReviewForm({
             ))}
         </Grid>
 
+        {/* Grade */}
         <Grid item xs={12}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Grade</FormLabel>
@@ -205,6 +212,8 @@ export function ReviewForm({
             )}
           </FormControl>
         </Grid>
+
+        {/* Text Review */}
         <Grid item xs={12}>
           <TextField
             label="Text Review (optional)"
@@ -224,6 +233,8 @@ export function ReviewForm({
             </Typography>
           )}
         </Grid>
+
+        {/* Submit Button */}
         <Grid item xs={12}>
           <Button variant="contained" color="primary" type="submit">
             Submit Review

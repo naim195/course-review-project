@@ -2,9 +2,11 @@ import { createContext, useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 
+// create context for course-related data and functions
 export const CourseContext = createContext();
 
 export const CourseProvider = ({ children }) => {
+  // State variables for courses, loading, errors, sorting, and filtering
   const [courses, setCourses] = useState([]);
   const [courseData, setCourseData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -18,9 +20,11 @@ export const CourseProvider = ({ children }) => {
     avgOverallDifficulty: null,
     avgEffortForGoodGrade: null,
   });
+
+  // Get backend URL from environment variables
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  // Load persisted state from localStorage
+  // Load persisted state from localStorage on component mount
   useEffect(() => {
     const savedSortBy = localStorage.getItem("sortBy");
     const savedSortOrder = localStorage.getItem("sortOrder");
@@ -38,6 +42,7 @@ export const CourseProvider = ({ children }) => {
     localStorage.setItem("filters", JSON.stringify(filters));
   }, [sortBy, sortOrder, filters]);
 
+  // Function to fetch all courses
   const fetchCourses = useCallback(async () => {
     if (courses.length === 0) {
       setLoading(true);
@@ -54,6 +59,7 @@ export const CourseProvider = ({ children }) => {
     }
   }, [courses.length, backendUrl]);
 
+  // Function to fetch data for a specific course
   const fetchCourseData = useCallback(
     async (courseId) => {
       try {
@@ -77,6 +83,7 @@ export const CourseProvider = ({ children }) => {
     [backendUrl],
   );
 
+  // Function to handle sorting
   const handleSort = useCallback(
     (type, value) => {
       if (type === "sortBy") {
@@ -93,6 +100,7 @@ export const CourseProvider = ({ children }) => {
     [sortBy],
   );
 
+  // Function to handle filtering
   const handleFilter = useCallback((filterType, value) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -100,6 +108,7 @@ export const CourseProvider = ({ children }) => {
     }));
   }, []);
 
+  // Provide course context to children components
   return (
     <CourseContext.Provider
       value={{
@@ -123,6 +132,7 @@ export const CourseProvider = ({ children }) => {
   );
 };
 
+// PropTypes for type checking
 CourseProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

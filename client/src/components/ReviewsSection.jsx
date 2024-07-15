@@ -14,8 +14,10 @@ export function ReviewsSection({
   reviews,
   setSnackbarOpen,
 }) {
-  const { setReviews } = useContext(CourseContext);
+  const { setReviews } = useContext(CourseContext); //setReviews from CourseContext
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  // initialize react-hook-form with default values
 
   const {
     register,
@@ -39,6 +41,7 @@ export function ReviewsSection({
     },
   });
 
+  //function to handle form submission
   const onSubmit = async (data) => {
     if (!user) {
       setSnackbarOpen(true);
@@ -46,6 +49,8 @@ export function ReviewsSection({
     }
 
     try {
+      // format instructor ratings before sending to backend
+
       const formattedInstructorRating = courseData.instructor.map(
         (instructor, index) => ({
           instructorId: instructor._id,
@@ -59,12 +64,18 @@ export function ReviewsSection({
         user,
       };
 
+      // Send POST request to add the review
       const response = await axios.post(
         `${backendUrl}/courses/${courseId}/reviews`,
         payload,
         { withCredentials: true },
       );
+
+      // Update the reviews state with the new review
       setReviews((prev) => [...prev, response.data]);
+
+      // Reset the form fields
+
       reset({
         rating: 0,
         effortForGoodGrade: 0,
@@ -81,18 +92,23 @@ export function ReviewsSection({
     }
   };
 
+  // function to handle review deletion
+
   const handleDelete = async (reviewId) => {
     try {
       await axios.delete(
         `${backendUrl}/courses/${courseId}/reviews/${reviewId}`,
         { withCredentials: true },
       );
+      // Update the reviews state by filtering out the deleted review
+
       setReviews((prev) => prev.filter((review) => review._id !== reviewId));
     } catch (error) {
       console.error("Error deleting review", error);
     }
   };
 
+  // function to check if the user has already reviewed the course
   const hasUserReviewedBefore = () => {
     if (user) {
       return reviews.some((review) => review.author._id === user._id);

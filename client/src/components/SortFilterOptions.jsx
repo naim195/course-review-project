@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 
+// component for sorting and filtering options
 function SortFilterOptions({
   sortBy,
   sortOrder,
@@ -25,14 +26,17 @@ function SortFilterOptions({
 }) {
   return (
     <Paper elevation={3} sx={{ mb: 4, p: 3 }}>
+      {/* Main title */}
       <Typography variant="h5" gutterBottom>
         Course Options
       </Typography>
 
+      {/* Sorting section */}
       <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
         Sort Courses
       </Typography>
       <Grid container spacing={2} sx={{ mb: 3 }}>
+        {/* Sort By dropdown */}
         <Grid item xs={12} md={6}>
           <FormControl fullWidth size="small">
             <InputLabel>Sort By</InputLabel>
@@ -41,6 +45,7 @@ function SortFilterOptions({
               onChange={(e) => handleSort("sortBy", e.target.value)}
               label="Sort By"
             >
+              {/* Sort options */}
               <MenuItem value="name">Name</MenuItem>
               <MenuItem value="code">Code</MenuItem>
               <MenuItem value="credits">Credits</MenuItem>
@@ -52,6 +57,7 @@ function SortFilterOptions({
             </Select>
           </FormControl>
         </Grid>
+        {/* Sort Order dropdown */}
         <Grid item xs={12} md={6}>
           <FormControl fullWidth size="small">
             <InputLabel>Sort Order</InputLabel>
@@ -69,10 +75,12 @@ function SortFilterOptions({
 
       <Divider sx={{ my: 3 }} />
 
+      {/* Filtering section */}
       <Typography variant="h6" gutterBottom>
         Filter Courses
       </Typography>
       <Grid container spacing={3}>
+        {/* Credits filter */}
         <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" gutterBottom>
             Credits
@@ -98,6 +106,7 @@ function SortFilterOptions({
           </FormGroup>
         </Grid>
 
+        {/* Minimum Rating filter */}
         <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" gutterBottom>
             Minimum Rating
@@ -115,6 +124,7 @@ function SortFilterOptions({
           </Box>
         </Grid>
 
+        {/* Maximum Difficulty filter */}
         <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" gutterBottom>
             Maximum Difficulty
@@ -134,6 +144,7 @@ function SortFilterOptions({
           </Box>
         </Grid>
 
+        {/* Maximum Effort for Good Grade filter */}
         <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" gutterBottom>
             Maximum Effort for Good Grade
@@ -154,29 +165,34 @@ function SortFilterOptions({
         </Grid>
       </Grid>
 
+      {/* Active Filters display */}
       <Box sx={{ mt: 3 }}>
         <Typography variant="h6" gutterBottom>
           Active Filters
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          {/* Credits filter chip */}
           {filters.credits.length > 0 && (
             <Chip
               label={`Credits: ${filters.credits.join(", ")}`}
               onDelete={() => handleFilter("credits", [])}
             />
           )}
+          {/* Minimum Rating filter chip */}
           {filters.avgRating && (
             <Chip
               label={`Min Rating: ${filters.avgRating}`}
               onDelete={() => handleFilter("avgRating", null)}
             />
           )}
+          {/* Maximum Difficulty filter chip */}
           {filters.avgOverallDifficulty && (
             <Chip
               label={`Max Difficulty: ${filters.avgOverallDifficulty}`}
               onDelete={() => handleFilter("avgOverallDifficulty", null)}
             />
           )}
+          {/* Maximum Effort filter chip */}
           {filters.avgEffortForGoodGrade && (
             <Chip
               label={`Max Effort: ${filters.avgEffortForGoodGrade}`}

@@ -8,20 +8,23 @@ import { useEffect, useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function Course() {
-  const { courseId } = useParams();
-  const { user } = useContext(AuthContext);
+  const { courseId } = useParams(); //course ID from parameters
+  const { user } = useContext(AuthContext); //user data
   const { courseData, fetchCourseData, reviews, error } =
-    useContext(CourseContext);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+    useContext(CourseContext); //course data
+  const [snackbarOpen, setSnackbarOpen] = useState(false); //managing snackbar visibility
 
+  //Fetching course data on component mount or when courseId changes
   useEffect(() => {
     fetchCourseData(courseId);
   }, [courseId, fetchCourseData]);
 
+  //closing snackbar
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
+  //instructor names like: name1(rating),name2(rating)
   const instructorNames =
     courseData?.instructor
       ?.map(
@@ -32,16 +35,18 @@ export default function Course() {
 
   return (
     <Container maxWidth="lg" sx={{ mb: 4 }}>
-      {error ? (
+      {error ? ( //display error message if there's an error fetching course data
         <Typography variant="h6" color="error">
           {error}
         </Typography>
       ) : (
         <>
+          {/* to display course data */}
           <CourseData
             instructorNames={instructorNames}
             courseData={courseData}
           />
+          {/* to display course statistics */}
           <CourseStatistics reviews={reviews} />
           <ReviewsSection
             user={user}
@@ -54,9 +59,9 @@ export default function Course() {
       )}
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={6000}
+        autoHideDuration={6000} //hide snackbar after 6s
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} //snackbar position
       >
         <Alert
           onClose={handleSnackbarClose}

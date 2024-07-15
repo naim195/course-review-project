@@ -10,8 +10,8 @@ const { faker } = require("@faker-js/faker/locale/en_IN");
 
 dotenv.config();
 
+// Set up MongoDB connection
 const dbUrl = process.env.DB_URL;
-
 mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
@@ -20,6 +20,7 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+// course categories
 const scienceBasket = {
   "PH 201": "Introduction to Electrodynamics",
   "PH 202": "Introduction to Quantum Physics",
@@ -73,7 +74,7 @@ const courseCodeDict = [
   "PH",
 ];
 
-// Initialize auth
+// Initialize auth for google sheets
 const serviceAccountAuth = new JWT({
   email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
   key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"), // Replace escaped newlines
@@ -85,6 +86,7 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth,
 );
 
+// Function to determine course category
 const getCourseCategory = (courseCode, courseName) => {
   if (scienceBasket.hasOwnProperty(courseCode)) {
     return "Sci. Basket";
@@ -97,6 +99,7 @@ const getCourseCategory = (courseCode, courseName) => {
   return "Misc";
 };
 
+// Function to generate fake reviews
 const generateFakeReviews = async () => {
   const courses = await Course.find();
   let users = await User.find();
@@ -198,18 +201,22 @@ const generateFakeReviews = async () => {
   console.log("Fake reviews generated successfully");
 };
 
+//main function to seed database
 const seedDb = async () => {
   try {
+    // Clear existing data
     await Course.deleteMany({});
     await Review.deleteMany({});
     await User.deleteMany({});
     await Instructor.deleteMany({});
 
+    // Load Google Sheet info
     await doc.loadInfo();
     const sheet = doc.sheetsByTitle["Time table"];
 
     const rows = await sheet.getRows();
 
+    //create courses and instructors
     for (const row of rows) {
       const courseCode = row.get("Course Code");
       const courseName = row.get("Course Name");
@@ -220,6 +227,7 @@ const seedDb = async () => {
       const lab = row.get("Lab");
 
       if (courseCode && courseName && instructor) {
+        //process instructor names
         const instructorNames = instructor
           .split(",")
           .map((s) => s.trim())
@@ -235,6 +243,7 @@ const seedDb = async () => {
 
         // Create instructors and add them to the course
         for (const name of instructorNames) {
+          // Create or find instructors
           let instructor = await Instructor.findOne({ name: name });
 
           if (!instructor) {
@@ -247,6 +256,7 @@ const seedDb = async () => {
           instructors.push(instructor);
         }
 
+        //create new course
         const course = new Course({
           name: courseName,
           code: courseCode,
@@ -271,4 +281,5 @@ const seedDb = async () => {
   }
 };
 
+//run seeding function
 seedDb();

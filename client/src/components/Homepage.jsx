@@ -26,11 +26,13 @@ const Homepage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // function to handle search and go to courses route
   const handleSearch = () => {
     if (searchCategory && searchTerm) {
       navigate(`/courses?category=${searchCategory}&search=${searchTerm}`);
     }
   };
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
@@ -59,6 +61,7 @@ const Homepage = () => {
           the best-rated courses and dodge nutty profs like a pro!
         </Typography>
 
+        {/* Search section */}
         <Box
           sx={{
             display: "flex",

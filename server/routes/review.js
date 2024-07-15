@@ -10,6 +10,7 @@ const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
 const { isLoggedIn } = require("../middleware/checkAuth");
 
+// Function to update course averages
 async function updateCourseAverages(courseId) {
   const course = await Course.findById(courseId).populate("reviews");
 
@@ -37,10 +38,11 @@ async function updateCourseAverages(courseId) {
   await course.save();
 }
 
+// Route to handle adding a new review
 router.post(
   "/",
-  isLoggedIn,
-  validate(reviewSchema),
+  isLoggedIn, // Middleware to check if user is logged in
+  validate(reviewSchema), // Middleware to validate review data
   catchAsync(async (req, res) => {
     const { courseId } = req.params;
     const reviewData = req.body;
@@ -59,6 +61,7 @@ router.post(
       author: reviewData.user._id,
     });
 
+    // Add review to course and user
     course.reviews.push(review);
     user.reviews.push(review);
 
@@ -66,10 +69,11 @@ router.post(
     await course.save();
     await user.save();
 
+    // Update instructor ratings
     for (const instructorRating of reviewData.instructorRating) {
       const instructor = await Instructor.findById(
         instructorRating.instructorId,
-      ); // Use instructorId instead of name
+      );
       if (instructor) {
         instructor.ratings.push(review);
         const ratings = await Review.find({ _id: { $in: instructor.ratings } });
@@ -92,9 +96,10 @@ router.post(
   }),
 );
 
+// Route to handle deleting a review
 router.delete(
   "/:reviewId",
-  isLoggedIn,
+  isLoggedIn, // Middleware to check if user is logged in
   catchAsync(async (req, res) => {
     const { courseId, reviewId } = req.params;
     const course = await Course.findById(courseId);
@@ -118,7 +123,7 @@ router.delete(
     for (const instructorRating of review.instructorRating) {
       const instructor = await Instructor.findById(
         instructorRating.instructorId,
-      ); // Use instructorId instead of name
+      );
       if (instructor) {
         await Instructor.findByIdAndUpdate(instructor._id, {
           $pull: { ratings: reviewId },

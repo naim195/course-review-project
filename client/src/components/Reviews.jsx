@@ -62,6 +62,7 @@ export function Reviews({ reviews, user, handleDelete }) {
                   </Typography>
                 </Box>
               </Box>
+              {/* Display delete button if the user is the author of the review */}
               {user && review.author._id === user._id && (
                 <Box mt={2}>
                   <Button

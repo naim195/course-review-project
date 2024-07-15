@@ -12,9 +12,13 @@ import "@fontsource/roboto/700.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    {/* for routing */}
     <BrowserRouter>
+      {/* makes authentication context available throughout  */}
       <AuthProvider>
+        {/* makes course-related context available throughout */}
         <CourseProvider>
+          {/* main App component */}
           <App />
         </CourseProvider>
       </AuthProvider>

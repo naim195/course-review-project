@@ -1,6 +1,7 @@
 import { Box, Grid, Paper, Typography, Rating, Divider } from "@mui/material";
 import PropTypes from "prop-types";
 
+//component to display course data
 export function CourseData({ instructorNames, courseData }) {
   return (
     <Box my={4}>
@@ -30,6 +31,7 @@ export function CourseData({ instructorNames, courseData }) {
               Instructor(s): {instructorNames}
             </Typography>
           </Grid>
+
           <Grid item xs={12} md={6}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
               <Typography variant="h6" sx={{ mr: 2 }}>
@@ -46,16 +48,20 @@ export function CourseData({ instructorNames, courseData }) {
                 )
               </Typography>
             </Box>
+
             <Divider sx={{ my: 2, backgroundColor: "primary.light" }} />
+
             <Typography variant="h6" gutterBottom>
               Credits: {courseData.credits}
             </Typography>
+
             <Typography variant="h6" gutterBottom>
               Avg Effort for Good Grade:{" "}
               {courseData.avgEffortForGoodGrade
                 ? `${courseData.avgEffortForGoodGrade.toFixed(2)}/5`
                 : "N/A"}
             </Typography>
+
             <Typography variant="h6" gutterBottom>
               Avg Overall Difficulty:{" "}
               {courseData.avgOverallDifficulty

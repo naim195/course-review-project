@@ -6,6 +6,7 @@ import SearchBar from "./SearchBar";
 import TabsComponent from "./TabsComponent";
 import SortFilterOptions from "./SortFilterOptions";
 
+// component to display a list of courses with search, sort, filter
 export default function CourseList() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,6 +15,8 @@ export default function CourseList() {
   const [searchCategory, setSearchCategory] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+
+  // getting course-related data and functions from context
   const {
     courses,
     fetchCourses,
@@ -25,10 +28,12 @@ export default function CourseList() {
     handleFilter,
   } = useContext(CourseContext);
 
+  // fetch courses when component mounts or when dependencies change
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
 
+  // update search term and category based on URL query parameters
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const category = searchParams.get("category");
@@ -39,10 +44,12 @@ export default function CourseList() {
     }
   }, [location.search]);
 
+  // handle course card click
   const handleCardClick = (id) => {
     navigate(`/courses/${id}`);
   };
 
+  // handle search input change
   const handleSearchChange = (event) => {
     if (searchCategory !== "") {
       setSearchTerm(event.target.value);
@@ -53,50 +60,61 @@ export default function CourseList() {
     }
   };
 
+  // filter and sort courses based on search, filters, sorting criteria
   const filteredAndSortedCourses = courses
     ? courses
         .filter((course) => {
-          if (searchTerm === "") return true;
+          // Filter by search term and category
+          if (searchTerm === "") return true; // If no search term, include all courses
           if (searchCategory === "name")
+            // Search in course name
             return course.name.toLowerCase().includes(searchTerm.toLowerCase());
           else if (searchCategory === "code")
+            // Search in course code
             return course.code.toLowerCase().includes(searchTerm.toLowerCase());
           else if (searchCategory === "instructor")
+            // Search in instructor names
             return course.instructor.some((instructor) =>
               instructor.name.toLowerCase().includes(searchTerm.toLowerCase()),
             );
-          return true;
+          return true; // Include course if no category matches (failsafe)
         })
         .filter((course) => {
+          // Filter by additional criteria (credits, ratings, difficulties)
           if (
             filters.credits.length > 0 &&
             !filters.credits.includes(course.credits)
           )
-            return false;
+            return false; // Exclude if credits don't match
           if (
             filters.avgRating !== null &&
             course.avgRating < filters.avgRating
           )
-            return false;
+            return false; // Exclude if rating is too low
           if (
             filters.avgOverallDifficulty !== null &&
             course.avgOverallDifficulty > filters.avgOverallDifficulty
           )
-            return false;
+            return false; // Exclude if too difficult
           if (
             filters.avgEffortForGoodGrade !== null &&
             course.avgEffortForGoodGrade > filters.avgEffortForGoodGrade
           )
-            return false;
-          return true;
+            return false; // Exclude if requires too much effort
+          return true; // Include course if it passes all filters
         })
+        // Sort courses based on sortBy and sortOrder
         .sort((a, b) => {
+          // If 'a' should come first in ascending order, return -1; otherwise 1
           if (a[sortBy] < b[sortBy]) return sortOrder === "asc" ? -1 : 1;
-          if (a[sortBy] > b[sortBy]) return sortOrder === "asc" ? 1 : -1;
-          return 0;
-        })
-    : [];
+          // If 'b' should come first in ascending order, return 1; otherwise -1
 
+          if (a[sortBy] > b[sortBy]) return sortOrder === "asc" ? 1 : -1;
+          return 0; // If values are equal, keep original order
+        })
+    : []; // if courses is null/undefined, return an empty array
+
+  // Group filtered and sorted courses by category
   const groupedCourses = filteredAndSortedCourses.reduce((acc, course) => {
     const category = course.category;
     if (!acc[category]) {
@@ -106,8 +124,9 @@ export default function CourseList() {
     return acc;
   }, {});
 
-  const tabHeaders = Object.keys(groupedCourses);
+  const tabHeaders = Object.keys(groupedCourses); // Array of category headers for tabs
 
+  // Display loading indicator while courses are being fetched
   if (loading) {
     return (
       <Box
@@ -123,11 +142,13 @@ export default function CourseList() {
     );
   }
 
+  // Render course list with search, sorting, filtering, and tab navigation
   return (
     <Box sx={{ mx: 4, marginTop: 4 }}>
       <Typography variant="h4" component="h1" sx={{ mb: 4 }}>
         All Courses
       </Typography>
+      {/* Search bar component */}
       <SearchBar
         searchCategory={searchCategory}
         setSearchCategory={setSearchCategory}
@@ -135,6 +156,7 @@ export default function CourseList() {
         handleSearchChange={handleSearchChange}
         showAlert={showAlert}
       />
+      {/* Sort and filter options component */}
       <SortFilterOptions
         sortBy={sortBy}
         sortOrder={sortOrder}
@@ -142,7 +164,7 @@ export default function CourseList() {
         handleSort={handleSort}
         handleFilter={handleFilter}
       />
-
+      {/* Tabs component for course categories */}
       <TabsComponent
         activeTab={activeTab}
         setActiveTab={setActiveTab}

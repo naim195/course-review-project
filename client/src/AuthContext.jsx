@@ -6,16 +6,22 @@ import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
 import { app } from "./firebase";
 
+// create context for authentication
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // State for user, loading status, and snackbar
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  // Get backend URL from environment variables
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  // Initialize Firebase auth
   const auth = getAuth(app);
 
+  // Effect to check authentication status on component mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -34,6 +40,7 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [backendUrl]);
 
+  // Function to handle Google Sign In
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
@@ -41,6 +48,7 @@ export const AuthProvider = ({ children }) => {
       console.log("Initiating Google sign-in...");
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       console.log("Google sign-in result:", resultsFromGoogle);
+      // Send user data to backend
       const res = await axios({
         method: "POST",
         url: `${backendUrl}/auth/google`,
@@ -64,6 +72,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to handle user logout
   const handleLogout = async () => {
     try {
       console.log("Logging out...");
@@ -79,23 +88,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to show snackbar messages
   const showSnackbar = (message) => {
     console.log("Showing snackbar:", message);
     setSnackbarMessage(message);
     setSnackbarOpen(true);
   };
 
+  // Function to close snackbar
   const handleCloseSnackbar = () => {
     console.log("Closing snackbar");
     setSnackbarOpen(false);
     setSnackbarMessage("");
   };
 
+  // Provide auth context to children components
   return (
     <AuthContext.Provider
       value={{ user, loading, handleGoogleSignIn, handleLogout, showSnackbar }}
     >
       {children}
+      {/* Snackbar for displaying messages */}
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
@@ -124,6 +137,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// PropTypes for type checking
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

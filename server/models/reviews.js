@@ -9,17 +9,17 @@ const reviewSchema = new Schema({
     {
       instructorId: {
         type: Schema.Types.ObjectId,
-        ref: "Instructor",
+        ref: "Instructor", // Reference to the Instructor model
       },
-      rating: Number,
+      rating: Number, //instructor rating
     },
   ],
 
-  grade: String,
+  grade: String, //grade of reviewer in course
   textReview: String,
   author: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "User", //Reference to User model
   },
 });
 

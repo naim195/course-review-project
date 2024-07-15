@@ -5,6 +5,8 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
+// displays a "Page Not Found" message with a home button for navigation.
+
 const NotFound = () => {
   const navigate = useNavigate();
 

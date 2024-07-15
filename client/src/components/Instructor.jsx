@@ -15,34 +15,38 @@ import {
 } from "@mui/material";
 
 const Instructor = () => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL; // backend URL from environment variables
   const [instructors, setInstructors] = useState([]);
   const [sortOrder, setSortOrder] = useState("desc");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
+  const [page, setPage] = useState(1); //current page number
+  const [totalPages, setTotalPages] = useState(1); //total pages
+  const itemsPerPage = 10; // Number of items to display per page
 
+  //function to fetch instructors from the backend
   const fetchInstructors = useCallback(async () => {
     try {
       const response = await axios.get(`${backendUrl}/instructors`, {
-        params: { page, limit: itemsPerPage, sort: sortOrder },
+        params: { page, limit: itemsPerPage, sort: sortOrder }, //query params for pagination and sorting
       });
       setInstructors(response.data.instructors);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error); //handle error
     }
   }, [backendUrl, page, sortOrder, itemsPerPage]);
 
+  // fetch instructors when component mounts or dependencies change
   useEffect(() => {
     fetchInstructors();
   }, [fetchInstructors]);
 
+  //function to change sorting order
   const handleSortChange = (event) => {
     setSortOrder(event.target.value);
     setPage(1);
   };
 
+  //fucntion to handle page changes
   const handlePageChange = (event, value) => {
     setPage(value);
   };

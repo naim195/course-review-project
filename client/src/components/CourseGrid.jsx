@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import PropTypes from "prop-types";
 import CourseCard from "./CourseCard";
 
+// component to display a grid of course cards
 function CourseGrid({ courses, handleCardClick }) {
   return (
     <Box

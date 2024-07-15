@@ -6,27 +6,24 @@ const cookieParser = require("cookie-parser");
 const router = express.Router();
 const secret = process.env.JWT_SECRET;
 
-// Ensure cookie-parser middleware is used
 router.use(cookieParser());
 
+// Handle Google sign-in
 router.post("/google", async (req, res) => {
   const { name, email, uid } = req.body;
-  console.log("Received Google sign-in request:", { name, email, uid });
 
   try {
+    // Check if user exists, create new user if not
     let user = await User.findOne({ googleId: uid });
-    if (user) {
-      console.log("User found:", user);
-    } else {
-      console.log("User not found, creating new user");
+    if (!user) {
       user = new User({ displayName: name, email, googleId: uid });
       await user.save();
-      console.log("New user created:", user);
     }
 
+    // Generate JWT token
     const token = jwt.sign({ id: user._id }, secret, { expiresIn: "1h" });
-    console.log("Token created:", token);
 
+    // Send token in cookie
     res
       .status(200)
       .cookie("access_token", token, {
@@ -35,19 +32,16 @@ router.post("/google", async (req, res) => {
         sameSite: "none",
       })
       .json({ user });
-    console.log("Token sent in cookie:", token);
   } catch (error) {
-    console.error("Login error:", error);
     res.status(401).json({ error: "Authentication failed" });
   }
 });
 
+// Check if user is authenticated
 router.get("/check", async (req, res) => {
   const token = req.cookies.access_token;
-  console.log("Checking authentication with token:", token);
 
   if (!token) {
-    console.error("No token found");
     return res.status(401).json({ error: "Not authenticated" });
   }
 
@@ -55,19 +49,16 @@ router.get("/check", async (req, res) => {
     const decoded = jwt.verify(token, secret);
     const user = await User.findById(decoded.id);
     if (!user) {
-      console.error("User not found for token");
       return res.status(401).json({ error: "User not found" });
     }
     res.status(200).json({ user });
-    console.log("User authenticated:", user);
   } catch (error) {
-    console.error("Auth check error:", error);
     res.status(401).json({ error: "Invalid token" });
   }
 });
 
+// Handle logout
 router.get("/logout", (req, res) => {
-  console.log("Logging out user");
   res
     .clearCookie("access_token", {
       httpOnly: true,
@@ -75,7 +66,6 @@ router.get("/logout", (req, res) => {
       sameSite: "none",
     })
     .json({ message: "Logged out successfully!" });
-  console.log(res.cookie);
 });
 
 module.exports = router;
