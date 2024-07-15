@@ -10,20 +10,30 @@ export const CourseProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState("");
+  const [paginationInfo, setPaginationInfo] = useState({});
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const fetchCourses = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${backendUrl}/courses`);
-      const coursesData = response.data;
-      setCourses(coursesData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [setCourses, backendUrl]);
+  const fetchCourses = useCallback(
+    async (params = {}) => {
+      setLoading(true);
+      try {
+        const queryString = new URLSearchParams(params).toString();
+        const response = await axios.get(
+          `${backendUrl}/courses?${queryString}`,
+        );
+        const { courses, currentPage, totalPages, totalCourses } =
+          response.data;
+        setCourses(courses);
+        setPaginationInfo({ currentPage, totalPages, totalCourses });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch courses");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [backendUrl],
+  );
 
   const fetchCourseData = useCallback(
     async (courseId) => {
@@ -59,6 +69,7 @@ export const CourseProvider = ({ children }) => {
         reviews,
         setReviews,
         error,
+        paginationInfo,
       }}
     >
       {children}
