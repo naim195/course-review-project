@@ -22,6 +22,11 @@ const userSchema = new Schema({
       ref: "Review", // Reference to the Review model for reviews authored by this user
     },
   ],
+  isAnonymous: {
+    type: Boolean,
+    default: false, // store user preference to remain anonymous
+  }
+
 });
 
 const User = mongoose.model("User", userSchema);

@@ -15,6 +15,7 @@ const courses = require("./routes/course");
 const reviews = require("./routes/review");
 const instructors = require("./routes/instructor");
 const auth = require("./routes/auth");
+const users = require("./routes/user");
 
 dotenv.config();
 const app = express();
@@ -57,6 +58,7 @@ app.use("/courses", courses);
 app.use("/courses/:courseId/reviews", reviews);
 app.use("/instructors", instructors);
 app.use("/auth", auth);
+app.use('/users', users);
 
 //root route
 app.get("/", (req, res) => {

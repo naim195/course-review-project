@@ -38,6 +38,7 @@ const instructorSchema = yup.object({
     .array()
     .of(yup.number().oneOf([1, 2, 3, 4, 5], "Invalid rating value"))
     .required("Rating is required"),
+    isAnonymous: yup.boolean().default(false),
 });
 
 module.exports = {

@@ -10,13 +10,13 @@ router.use(cookieParser());
 
 // Handle Google sign-in
 router.post("/google", async (req, res) => {
-  const { name, email, uid } = req.body;
+  const { name, email, uid, isAnonymous } = req.body;
 
   try {
     // Check if user exists, create new user if not
     let user = await User.findOne({ googleId: uid });
     if (!user) {
-      user = new User({ displayName: name, email, googleId: uid });
+      user = new User({ displayName: name, email, googleId: uid , isAnonymous});
       await user.save();
     }
 
