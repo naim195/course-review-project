@@ -58,7 +58,7 @@ app.use("/courses", courses);
 app.use("/courses/:courseId/reviews", reviews);
 app.use("/instructors", instructors);
 app.use("/auth", auth);
-app.use('/users', users);
+app.use("/users", users);
 
 //root route
 app.get("/", (req, res) => {

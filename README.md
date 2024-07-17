@@ -4,11 +4,9 @@
 
 This project is a website for students to review and rate courses at IITGN. It allows users to browse courses, leave reviews, and view aggregated ratings and feedback for each course. The main aim is to help students make better decisions in choosing courses and assist them in achieving their academic goals.
 
-
 ## Features
 
 - **Quick sign-in using Google:** Users can quickly sign in using their Google account for seamless access.
-  
 - **Course listing and search functionality:** Browse and search through a comprehensive list of available courses.
 
 - **Detailed course pages:** Each course has a dedicated page displaying detailed information including reviews, ratings, and past grade distributions.
@@ -18,7 +16,6 @@ This project is a website for students to review and rate courses at IITGN. It a
 - **Instructor information:** View instructors associated with each course and sort them based on their ratings.
 
 - **Sorting and filtering:** Sort courses based on various criteria such as ratings, effort required for a good grade and difficulty. Filter courses by credits, minimum rating and various other parameters..
-
 
 ## Technologies Used
 
@@ -42,6 +39,7 @@ This project is a website for students to review and rate courses at IITGN. It a
 3. Submit reviews for courses
 
 ## Future Plans
+
 - I want to add something like a timetable generator on this website. Until then, you can use this [timetable generator](https://timetable-generator-khaki.vercel.app) I have already made.
 - I want to add an admin page where admins can add and delete courses.
 

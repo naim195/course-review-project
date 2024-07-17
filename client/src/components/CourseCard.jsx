@@ -5,6 +5,8 @@ import {
   Grid,
   Box,
   Rating,
+  Divider,
+  Chip,
 } from "@mui/material";
 import PropTypes from "prop-types";
 
@@ -21,6 +23,7 @@ function CourseCard({ course, handleCardClick }) {
         flexDirection: "column",
         minWidth: "280px",
         maxWidth: "400px",
+        borderRadius: 2,
       }}
       onClick={() => handleCardClick(course._id)}
     >
@@ -67,25 +70,33 @@ function CourseCard({ course, handleCardClick }) {
           </Typography>
         </Box>
 
-        <Box sx={{ mt: "auto" }}>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs={4}>
-              <Typography variant="body2" color="text.secondary">
-                Credits: {course.credits}
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography variant="body2" color="text.secondary">
-                Difficulty: {course.avgOverallDifficulty.toFixed(1)}
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography variant="body2" color="text.secondary">
-                Effort: {course.avgEffortForGoodGrade.toFixed(1)}
-              </Typography>
-            </Grid>
+        <Divider sx={{ my: 2 }} />
+
+        <Grid container spacing={1} alignItems="center">
+          <Grid item xs={6}>
+            <Chip
+              label={course.isBeingOffered ? "Offered" : "Not Offered"}
+              color={course.isBeingOffered ? "success" : "error"}
+            />
           </Grid>
-        </Box>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              Credits: {course.credits}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              Difficulty: {course.avgOverallDifficulty.toFixed(1)}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">
+              Effort: {course.avgEffortForGoodGrade.toFixed(1)}
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}></Box>
       </CardContent>
     </Card>
   );
@@ -105,6 +116,7 @@ CourseCard.propTypes = {
     avgRating: PropTypes.number.isRequired,
     avgOverallDifficulty: PropTypes.number.isRequired,
     avgEffortForGoodGrade: PropTypes.number.isRequired,
+    isBeingOffered: PropTypes.bool,
   }).isRequired,
   handleCardClick: PropTypes.func.isRequired,
 };

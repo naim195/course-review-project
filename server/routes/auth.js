@@ -16,7 +16,7 @@ router.post("/google", async (req, res) => {
     // Check if user exists, create new user if not
     let user = await User.findOne({ googleId: uid });
     if (!user) {
-      user = new User({ displayName: name, email, googleId: uid , isAnonymous});
+      user = new User({ displayName: name, email, googleId: uid, isAnonymous });
       await user.save();
     }
 

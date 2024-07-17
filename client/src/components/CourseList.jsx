@@ -101,6 +101,11 @@ export default function CourseList() {
             course.avgEffortForGoodGrade > filters.avgEffortForGoodGrade
           )
             return false; // Exclude if requires too much effort
+          if (
+            filters.isBeingOffered !== null &&
+            course.isBeingOffered !== filters.isBeingOffered
+          )
+            return false;
           return true; // Include course if it passes all filters
         })
         // Sort courses based on sortBy and sortOrder

@@ -19,6 +19,7 @@ export const CourseProvider = ({ children }) => {
     avgRating: null,
     avgOverallDifficulty: null,
     avgEffortForGoodGrade: null,
+    isBeingOffered: null,
   });
 
   // Get backend URL from environment variables

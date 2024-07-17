@@ -13,6 +13,8 @@ import {
   Slider,
   Box,
   Chip,
+  ToggleButtonGroup,
+  ToggleButton,
 } from "@mui/material";
 import PropTypes from "prop-types";
 
@@ -80,8 +82,30 @@ function SortFilterOptions({
         Filter Courses
       </Typography>
       <Grid container spacing={3}>
-        {/* Credits filter */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1" gutterBottom>
+            Course Availability
+          </Typography>
+          <ToggleButtonGroup
+            value={filters.isBeingOffered}
+            exclusive
+            onChange={(_, newValue) => handleFilter("isBeingOffered", newValue)}
+            aria-label="course availability"
+          >
+            <ToggleButton value={true} aria-label="offered courses">
+              Offered
+            </ToggleButton>
+            <ToggleButton value={false} aria-label="not offered courses">
+              Not Offered
+            </ToggleButton>
+            <ToggleButton value={null} aria-label="all courses">
+              All
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Grid>
+
+        {/* Credits Filter */}
+        <Grid item xs={12} md={6}>          
           <Typography variant="subtitle1" gutterBottom>
             Credits
           </Typography>
@@ -199,6 +223,12 @@ function SortFilterOptions({
               onDelete={() => handleFilter("avgEffortForGoodGrade", null)}
             />
           )}
+          {filters.isBeingOffered !== null && (
+            <Chip
+              label={`Availability: ${filters.isBeingOffered ? "Offered" : "Not Offered"}`}
+              onDelete={() => handleFilter("isBeingOffered", null)}
+            />
+          )}
         </Box>
       </Box>
     </Paper>
@@ -213,6 +243,7 @@ SortFilterOptions.propTypes = {
     avgRating: PropTypes.number,
     avgOverallDifficulty: PropTypes.number,
     avgEffortForGoodGrade: PropTypes.number,
+    isBeingOffered: PropTypes.bool,
   }).isRequired,
   handleSort: PropTypes.func.isRequired,
   handleFilter: PropTypes.func.isRequired,

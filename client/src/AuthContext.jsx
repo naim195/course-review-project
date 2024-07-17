@@ -1,6 +1,16 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
-import { IconButton, Snackbar, SnackbarContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
+import {
+  IconButton,
+  Snackbar,
+  SnackbarContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@mui/material";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
@@ -27,12 +37,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        
         const res = await axios.get(`${backendUrl}/auth/check`, {
           withCredentials: true,
         });
         setUser(res.data.user);
-        
       } catch (error) {
         console.error("Auth check error", error);
       } finally {
@@ -47,12 +55,12 @@ export const AuthProvider = ({ children }) => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
     try {
-      
       const resultsFromGoogle = await signInWithPopup(auth, provider);
-      
 
       // Check if the user already exists
-      const userRes = await axios.get(`${backendUrl}/users/${resultsFromGoogle.user.uid}`);
+      const userRes = await axios.get(
+        `${backendUrl}/users/${resultsFromGoogle.user.uid}`,
+      );
       const userExists = userRes.data.exists;
 
       if (!userExists) {
@@ -80,7 +88,7 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         });
         setUser(res.data.user);
-        
+
         showSnackbar("Sign in success.");
       }
     } catch (error) {
@@ -113,7 +121,7 @@ export const AuthProvider = ({ children }) => {
       });
       const data = res.data;
       setUser(data.user);
-      
+
       showSnackbar("Sign in success.");
     } catch (error) {
       console.error("Sign-in error", error);
@@ -125,12 +133,11 @@ export const AuthProvider = ({ children }) => {
   // Function to handle user logout
   const handleLogout = async () => {
     try {
-      
       await axios.get(`${backendUrl}/auth/logout`, {
         withCredentials: true,
       });
       setUser(null); // Reset user state to null
-     
+
       showSnackbar("Logged out successfully!");
     } catch (error) {
       console.error("Logout error", error);
@@ -140,14 +147,12 @@ export const AuthProvider = ({ children }) => {
 
   // Function to show snackbar messages
   const showSnackbar = (message) => {
-    
     setSnackbarMessage(message);
     setSnackbarOpen(true);
   };
 
   // Function to close snackbar
   const handleCloseSnackbar = () => {
-   
     setSnackbarOpen(false);
     setSnackbarMessage("");
   };
@@ -184,10 +189,7 @@ export const AuthProvider = ({ children }) => {
         />
       </Snackbar>
       {/* Dialog for anonymous preference */}
-      <Dialog
-        open={dialogOpen}
-        onClose={() => handleDialogClose(false)}
-      >
+      <Dialog open={dialogOpen} onClose={() => handleDialogClose(false)}>
         <DialogTitle>Sign In</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -198,7 +200,11 @@ export const AuthProvider = ({ children }) => {
           <Button onClick={() => handleDialogClose(true)} color="primary">
             Yes
           </Button>
-          <Button onClick={() => handleDialogClose(false)} color="primary" autoFocus>
+          <Button
+            onClick={() => handleDialogClose(false)}
+            color="primary"
+            autoFocus
+          >
             No
           </Button>
         </DialogActions>

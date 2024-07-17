@@ -6,6 +6,7 @@ const courseSchema = new Schema({
   name: String, // Course name
   code: String, // Course code
   credits: Number, // Number of credits for the course
+  isBeingOffered: Boolean, // Whetehr course is being offered in curr sem
   instructor: [
     {
       // Array of instructor IDs referencing the "Instructor" model

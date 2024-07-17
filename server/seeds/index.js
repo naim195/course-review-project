@@ -86,6 +86,11 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth,
 );
 
+const currTimetableDoc = new GoogleSpreadsheet(
+  process.env.CURRENT_TIMETABLE_SHEET_ID,
+  serviceAccountAuth,
+);
+
 // Function to determine course category
 const getCourseCategory = (courseCode, courseName) => {
   if (scienceBasket.hasOwnProperty(courseCode)) {
@@ -97,6 +102,22 @@ const getCourseCategory = (courseCode, courseName) => {
   const code = courseCode.split(" ")[0];
   if (courseCodeDict.includes(code)) return code;
   return "Misc";
+};
+
+//Function to load curr timetable info
+const loadcurrTimetableInfo = async (sheet) => {
+  const rows = await sheet.getRows();
+  const currentCourses = new Set();
+
+  for (const row of rows) {
+    const courseCode = row.get("Course Code");
+    const courseName = row.get("Course Name");
+    const instructor = row.get("Name of the Instructors and Tutors");
+    if (courseCode && courseName && instructor) {
+      currentCourses.add(courseCode);
+    }
+  }
+  return currentCourses;
 };
 
 // Function to generate fake reviews
@@ -216,7 +237,13 @@ const seedDb = async () => {
 
     const rows = await sheet.getRows();
 
-    //create courses and instructors
+    // Load curr timetable info
+    await currTimetableDoc.loadInfo();
+    const currTimetableSheet = currTimetableDoc.sheetsByTitle["Time table"];
+
+    const currCoursesOffered = await loadcurrTimetableInfo(currTimetableSheet);
+
+    // Create courses and instructors
     for (const row of rows) {
       const courseCode = row.get("Course Code");
       const courseName = row.get("Course Name");
@@ -227,7 +254,7 @@ const seedDb = async () => {
       const lab = row.get("Lab");
 
       if (courseCode && courseName && instructor) {
-        //process instructor names
+        // Process instructor names
         const instructorNames = instructor
           .split(",")
           .map((s) => s.trim())
@@ -256,13 +283,14 @@ const seedDb = async () => {
           instructors.push(instructor);
         }
 
-        //create new course
+        // Create new course
         const course = new Course({
           name: courseName,
           code: courseCode,
           category: courseCategory,
           credits: credits,
-          instructor: instructors, // Assign array of instructors
+          instructor: instructors,
+          isBeingOffered: currCoursesOffered.has(courseCode), // Set isBeingOffered based on current courses
         });
 
         await course.save();

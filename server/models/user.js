@@ -25,8 +25,7 @@ const userSchema = new Schema({
   isAnonymous: {
     type: Boolean,
     default: false, // store user preference to remain anonymous
-  }
-
+  },
 });
 
 const User = mongoose.model("User", userSchema);
