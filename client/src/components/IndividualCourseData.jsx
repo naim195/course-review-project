@@ -52,10 +52,7 @@ export function CourseData({ instructorNames, courseData }) {
             >
               {courseData.name}
             </Typography>
-            <Typography
-              variant={isMobile ? "h6" : "h5"}
-              gutterBottom
-            >
+            <Typography variant={isMobile ? "h6" : "h5"} gutterBottom>
               {courseData.code}
             </Typography>
             <Typography variant="body1" sx={{ mt: 2 }}>
@@ -84,9 +81,9 @@ export function CourseData({ instructorNames, courseData }) {
                   precision={0.1}
                   size={isMobile ? "small" : "medium"}
                   sx={{
-                    '& .MuiRating-iconEmpty': {
-                      color: 'white', // This makes the border of unfilled stars white
-                    }
+                    "& .MuiRating-iconEmpty": {
+                      color: "white", // This makes the border of unfilled stars white
+                    },
                   }}
                 />
                 <Typography variant="body2" sx={{ ml: 1 }}>
