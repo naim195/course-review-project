@@ -26,6 +26,13 @@ const Homepage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  //function to search when enter is pressed
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  }
+
   // function to handle search and go to courses route
   const handleSearch = () => {
     if (searchCategory && searchTerm) {
@@ -76,6 +83,7 @@ const Homepage = () => {
             label="Hunt for"
             value={searchCategory}
             onChange={(e) => setSearchCategory(e.target.value)}
+            onKeyDown={handleKeyPress}
             sx={{
               width: isMobile ? "100%" : "20%",
               mb: isMobile ? 2 : 0,
