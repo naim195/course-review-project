@@ -64,8 +64,8 @@ const Homepage = () => {
           align="center"
           paragraph
         >
-          Tired of that one professor who ruins your CPI every semester? Find
-          the best-rated courses and dodge nutty profs like a pro!
+          Tired of that one course who ruins your CPI every semester? Find
+          the best-rated courses aur har sem phod do!
         </Typography>
 
         {/* Search section */}
@@ -92,7 +92,7 @@ const Homepage = () => {
           >
             <MenuItem value="code">Course Code(for nerds)</MenuItem>
             <MenuItem value="name">Course Name(for normal people)</MenuItem>
-            <MenuItem value="instructor">Instructor(pick your poison)</MenuItem>
+            <MenuItem value="instructor">Instructor</MenuItem>
           </TextField>
           <TextField
             variant="outlined"
@@ -127,13 +127,13 @@ const Homepage = () => {
             {
               icon: GradeIcon,
               title: "Prof Hall of Fame",
-              action: "Meet the Least Scary Ones",
+              action: "Meet the Best Ones",
               route: "/instructors",
             },
             {
               icon: AssignmentIcon,
-              title: "Vent Your Feelings",
-              action: 'Write a "Love" Letter',
+              title: "Write a Review",
+              action: 'Help others make informed decisions',
               route: "/courses",
             },
           ].map((item, index) => (
